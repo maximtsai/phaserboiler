@@ -6,7 +6,6 @@ let gameVersion = "v.1.0";
 let config = {
     type: Phaser.AUTO,
     scale: {
-        parent: 'newgame',
         autoRound: true,
         width: pixelWidth,
         height: isMobile ? 810 : 775,
@@ -40,6 +39,7 @@ let game;
 
 function onloadFunc() {
     game = new Phaser.Game(config); // var canvas = game.canvas;
+    initWebGLStuff(game.canvas)
 }
 
 let gameConsts = {
