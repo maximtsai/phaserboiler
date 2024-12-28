@@ -1,10 +1,23 @@
+let newcanvas = document.getElementById('newgamecanvas');
+const contextCreationConfig = {
+    alpha: false,
+    depth: false,
+    antialias: true,
+    premultipliedAlpha: true,
+    stencil: true,
+    preserveDrawingBuffer: false,
+    failIfMajorPerformanceCaveat: false,
+    powerPreference: 'default'
+};
+const myCustomContext = newcanvas.getContext('webgl2', contextCreationConfig);
+
 let isMobile = testMobile();
 let pixelWidth = isMobile ? 594 : 604
 let pixelHeight = isMobile ? 810 : 775
 handleBorders();
 let gameVersion = "v.1.0";
 let config = {
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     scale: {
         autoRound: true,
         width: pixelWidth,
@@ -21,7 +34,9 @@ let config = {
     transparent: true,
     expandParent: true,
     clearBeforeRender: false,
-    parent: 'newgame',
+    canvas: newcanvas,
+    context: myCustomContext,
+
     loader: {
         baseURL: '' // Where we begin looking for files
     },
@@ -36,10 +51,12 @@ let config = {
 };
 
 let game;
-
+let gameCanvas;
 function onloadFunc() {
     game = new Phaser.Game(config); // var canvas = game.canvas;
-    initWebGLStuff(game.canvas)
+    gameCanvas = game.canvas;
+    initWebGLStuff(game.canvas);
+
 }
 
 let gameConsts = {

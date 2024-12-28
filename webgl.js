@@ -8,19 +8,20 @@ let vertexListProperties = [
 ]; 
 
 function initWebGLStuff(canvas) {
-	console.log(canvas);
+	try {
+		helloTriangle(canvas);
+	} catch (e) {
+		showError(`Uncaught Javascript Exception: ${e}`)
+	}
 }
 
 function showError(errorText) {
+	setTimeout(() => {
 	const errorDiv = document.getElementById('preload-notice');
 	errorDiv.innerHTML = errorDiv.innerHTML + '\n' + errorText;
+	}, 100)
+
 }
-
-setTimeout(() => {
-	console.log("try erro")
-	showError("this is what an error looks like");
-
-}, 500)
 // We have to send this raw data to the GPU as a GPU BUFFER. Buffer = chunk of bytes
 // Each number is 4 bytes, 6x4 = 24 bytes GPU buffer data
 // Next is specify how GPU reads data out of that buffer by declaring ATTRIBUTES for that buffer.
@@ -28,6 +29,27 @@ setTimeout(() => {
 // NOW VERTEXT SHADER
 // Each vertex is run through program we write to determine where it should go.
 // x = -1 left, 1 right, y = -1 bottom, 1 top, z = ..., w = ...
+
+function helloTriangle(canvas) {
+	if (!canvas) {
+		showError('Cannot get demo canvas')
+		return;
+	}
+	const gl = canvas.getContext('webgl2');
+	if (!gl) {
+		const isWebGL1Supported = !!canvas.getContext('webgl');
+		if (isWebGL1Supported) {
+			showError('This browser supports WebGL 1 but not 2.\nMake sure WebGl2 isn\'t disabled in your browser.')
+		} else {
+			showError('This browser does not support WebGL 2\nThis demo will not work!')
+		}
+		return;
+	}
+	// Here is unique weird webgl code because it uses 3 buffers
+	gl.clear();
+}
+
+
 
 
 
