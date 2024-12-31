@@ -27,7 +27,7 @@ function setupLoadingBar(scene) {
     scene.load.on('complete', () => {
         loadObjects.loadingText.setText("READY");
         onLoadComplete(scene);
-        loadObjects.fadeBG = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'blackPixel').setScale(1000).setAlpha(0.5).setDepth(-5);
+        loadObjects.fadeBG = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'blackPixel').setScale(20).setAlpha(0.5).setDepth(-5);
 
         scene.tweens.add({
             targets: loadObjects.fadeBG,

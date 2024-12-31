@@ -146,7 +146,7 @@ function create ()
 function onPreloadComplete (scene)
 {
     showHTMLBackground();
-    globalObjects.tempBG = scene.add.sprite(0, 0, 'blackPixel').setScale(1000, 1000).setDepth(-1);
+    globalObjects.tempBG = scene.add.sprite(0, 0, 'whitePixel').setScale(10, 10).setDepth(-1);
 
     setupMouseInteraction(scene);
     setupLoadingBar(scene);
@@ -208,12 +208,15 @@ function update(time, delta) {
     } else {
         timeUpdateCounter++;
     }
+    // mywebgl.clearColor(0.08, 0.48, 0.08, 1.0);
+    // mywebgl.clear(mywebgl.COLOR_BUFFER_BIT | mywebgl.DEPTH_BUFFER_BIT); // both color and depth are integers with a single bit set to 1, rest 0, so you can | them
 
     avgDeltaScale *= gameVars.timeScale;
     gameVars.avgDeltaScale = avgDeltaScale;
 
     buttonManager.update(avgDeltaScale);
     updateManager.update(avgDeltaScale);
+
 
     gameVars.mouseJustDowned = false;
     gameVars.mouseJustUpped = false;
