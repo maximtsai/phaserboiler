@@ -67,16 +67,12 @@ class Button {
             }
             let newImage = this.imageRefs[stateData.ref];
             if (!newImage) {
-                let oldImage = this.imageRefs[this.oldImageRef];
                 if (stateData.atlas) {
-                    if (oldImage) {
-                        oldImage.setFrame(stateData.ref);
-                    } else {
-                        newImage = this.scene.add.sprite(0, 0, stateData.atlas, stateData.ref);
-                    }
+                    newImage = this.scene.add.sprite(0, 0, stateData.atlas, stateData.ref);
                 } else {
                     newImage = this.scene.add.sprite(0, 0, stateData.ref);
                 }
+                let oldImage = this.imageRefs[this.oldImageRef];
                 if (oldImage) {
                     newImage.setOrigin(oldImage.originX, oldImage.originY);
                     newImage.scrollFactorX = oldImage.scrollFactorX;
@@ -87,7 +83,7 @@ class Button {
                 // }
                 newImage.setDepth(this.depth);
                 this.imageRefs[stateData.ref] = newImage;
-            }
+            } 
             if (!this.forceInvis) {
                 newImage.visible = true;
             }
