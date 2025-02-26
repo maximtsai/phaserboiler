@@ -92,41 +92,6 @@ function clickIntro() {
         ease: 'Quad.easeIn',
         duration: 2100
     });
-
-    if (!loadObjects.introLocketOpen) {
-         loadObjects.introLocketOpen = PhaserScene.add.image(loadObjects.introLocket.x, loadObjects.introLocket.y, 'misc', 'locket3.png').setDepth(1001).setOrigin(0.5, 0.65);
-        loadObjects.introLocketOpen.scrollFactorX = 0; loadObjects.introLocketOpen.scrollFactorY = 0;
-    } else {
-        loadObjects.introLocketOpen.setFrame('locket3.png').setOrigin(0.5, 0.65);
-    }
-
-    loadObjects.introLocketOpen.setScale(0.8);
-    loadObjects.introLocketOpenBg = PhaserScene.add.image(loadObjects.introLocketOpen.x, loadObjects.introLocketOpen.y, 'misc', 'locket2.png');
-    loadObjects.introLocketOpenBg.setDepth(loadObjects.introLocketOpen.depth - 1).setOrigin(0.5, 0.65).setScale(0.8);
-    loadObjects.introLocketOpenBg.scrollFactorX = 0; loadObjects.introLocketOpenBg.scrollFactorY = 0;
-    PhaserScene.tweens.add({
-        targets: [loadObjects.introLocketOpenBg],
-        alpha: 0,
-        duration: 300
-    });
-    PhaserScene.tweens.add({
-        targets: [loadObjects.introLocketOpen, loadObjects.introLocketOpenBg],
-        rotation: 0,
-        scrollY: 0,
-        ease: 'Cubic.easeOut',
-        duration: 750,
-        onComplete: () => {
-            playSound('whoosh')
-        }
-    });
-    PhaserScene.tweens.add({
-        targets: [loadObjects.introLocketOpen, loadObjects.introLocketOpenBg],
-        scaleX: 0.75,
-        scaleY: 0.75,
-         y: gameConsts.halfHeight - 100,
-        ease: 'Cubic.easeOut',
-        duration: 1000
-    });
 }
 
 function cleanupIntro() {
