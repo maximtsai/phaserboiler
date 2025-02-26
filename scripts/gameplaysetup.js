@@ -25,15 +25,13 @@ function setupLoadingBar(scene) {
         loadObjects.loadingBarMain.scaleX = 200 * value;
     });
     scene.load.on('complete', () => {
-        loadObjects.loadingText.setText("READY");
+        loadObjects.loadingText.setVisible(false);
         onLoadComplete(scene);
-        loadObjects.fadeBG = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'blackPixel').setScale(1000).setAlpha(0.5).setDepth(-5);
+        // loadObjects.fadeBG = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'blackPixel').setScale(1000).setAlpha(0.5).setDepth(-5);
 
-        scene.tweens.add({
-            targets: loadObjects.fadeBG,
-            alpha: 0,
-            duration: 500,
-        });
+        for (let i in loadObjects) {
+            loadObjects[i].destroy();
+        }
     });
 }
 
