@@ -1,5 +1,5 @@
 /**
- * Controls passage of game time
+ * Controls passage of game time, lets you pause and unpause stuff
  **/
  class TimeManager {
     constructor() {
