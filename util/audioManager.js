@@ -66,8 +66,13 @@ function playSound(name, volume = 1, loop = false, isMusic = false) {
         soundList[name].currTween = null;
     }
     if (isMusic) {
-        soundList[name].volume = volume * globalMusicVol;
+        if (globalMusic) {
+            let globalMusicTemp = globalMusic;
+            fadeAwaySound(globalMusicTemp);
+        }
         globalMusic = soundList[name];
+        globalMusic.volume = 0.1 * volume * globalMusicVol;
+        fadeInSound(globalMusic, volume * globalMusicVol);
     }
     if (!isMusic && soundList[name].duration > 3.5) {
         if (useSecondLongSound) {
@@ -149,6 +154,22 @@ function setVolume(sound, volume = 0, duration) {
     }
 }
 
+function swapMusic(newMusic, volume = 1, loop = true) {
+    let name = getGlobalMusicName();
+    if (newMusic !== name) {
+        globalMusic = playMusic(newMusic, volume, loop)
+    }
+    // else do nothing
+}
+
+function getGlobalMusicName() {
+    if (globalMusic) {
+        return globalMusic.key;
+    } else {
+        return "";
+    }
+
+}
 
 function fadeAwaySound(sound, duration = 650, ease, onComplete) {
     sound.fullVolume = 0;

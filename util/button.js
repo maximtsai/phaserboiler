@@ -83,7 +83,7 @@ class Button {
                 // }
                 newImage.setDepth(this.depth);
                 this.imageRefs[stateData.ref] = newImage;
-            } 
+            }
             if (!this.forceInvis) {
                 newImage.visible = true;
             }
@@ -144,13 +144,13 @@ class Button {
         } else {
             this.imageRefs[stateData.ref].setTint(stateData.tint);
         }
-        if (this.text) {
-            if (newState === DISABLE) {
-                this.text.visible = false;
-            } else {
-                this.text.visible = true;
-            }
-        }
+        // if (this.text) {
+        //     if (newState === DISABLE) {
+        //         this.text.visible = false;
+        //     } else {
+        //         this.text.visible = true;
+        //     }
+        // }
     }
 
     setVisible(vis = true) {
@@ -459,6 +459,12 @@ class Button {
         let depth = this.normal.depth ? this.normal.depth + 1 : 1;
         this.text = this.scene.add.text(this.normal.x, this.normal.y, text, font).setAlpha(this.normal.alpha).setOrigin(0.5, 0.5).setDepth(depth);
         return this.text;
+    }
+
+    setTextColor(color) {
+        if (this.text) {
+            this.text.setColor(color);
+        }
     }
 
     setTextOffset(x, y) {
