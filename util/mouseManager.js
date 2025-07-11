@@ -92,6 +92,8 @@ function setupMouseInteraction(scene) {
         x: 0, y: 0, key: 'whitePixel', add: true, scale: {x: gameConsts.width, y: gameConsts.height}, alpha: 0.001});
     baseTouchLayer.setInteractive();
     baseTouchLayer.on('pointerdown', mouseManager.onPointerDown, scene);
+    baseTouchLayer.scrollFactorX = 0;
+    baseTouchLayer.scrollFactorY = 0;
     // baseTouchLayer.on('pointerup', mouseManager.onPointerUp, scene);
     // baseTouchLayer.on('pointermove', mouseManager.onPointerDown, scene); // doesn't work outside
 

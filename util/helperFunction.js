@@ -78,6 +78,22 @@ function hideGlobalClickBlocker() {
     }
 }
 
+function typewriterText(textObj, str, delay = 50, sfx) {
+    if (str.length <= 0) {
+        return;
+    }
+    textObj.setText(textObj.text + str[0]);
+    if (sfx && str[0] !== " " && str[0] !== "•") {
+        playSound(sfx);
+    }
+    let actualDelay = delay;
+    if (str[0] === " ") {
+        actualDelay = 0;
+    }
+    setTimeout(() => {
+        typewriterText(textObj, str.substring(1, str.length), delay, sfx)
+    }, actualDelay)
+}
 
 function restartGame() {
     location.reload();

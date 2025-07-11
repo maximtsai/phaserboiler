@@ -1,7 +1,7 @@
 // audiomanager
 let soundList = [];
-globalVolume = 0.9;
-globalMusicVol = 0.9;
+globalVolume = 1;
+globalMusicVol = 1;
 globalMusic = null;
 globalTempMusic = null;
 let lastLongSound = null;
@@ -49,8 +49,9 @@ function initializeSounds(scene) {
     //     }
     //     soundList[audioData.name] = scene.sound.add(audioData.name);
     // }
-    globalVolume = localStorage.getItem("globalVolume") || 0.9;
-    globalMusicVol = localStorage.getItem("globalMusicVol") || 0.9;
+    globalVolume = localStorage.getItem("globalVolume") || 1;
+
+    globalMusicVol = localStorage.getItem("globalMusicVol") || 1;
 }
 
 function playSound(name, volume = 1, loop = false, isMusic = false) {
@@ -91,7 +92,7 @@ function playSound(name, volume = 1, loop = false, isMusic = false) {
     return soundList[name];
 }
 
-function playMusic(name, volume = 1, loop = false) {
+function playMusic(name, volume = 0.85, loop = false) {
     return this.playSound(name, volume, loop, true);
 }
 
@@ -154,7 +155,7 @@ function setVolume(sound, volume = 0, duration) {
     }
 }
 
-function swapMusic(newMusic, volume = 1, loop = true) {
+function swapMusic(newMusic, volume = 0.85, loop = true) {
     let name = getGlobalMusicName();
     if (newMusic !== name) {
         globalMusic = playMusic(newMusic, volume, loop)

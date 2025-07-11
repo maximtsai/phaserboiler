@@ -136,7 +136,10 @@ class Button {
             this.imageRefs[stateData.ref].scaleY = stateData.scaleY;
         }
         if (stateData.origin !== undefined) {
-            this.setOrigin(origin.x, origin.y);
+            this.setOrigin(stateData.origin.x, stateData.origin.y);
+        }
+        if (stateData.rotation !== undefined) {
+            this.setRotation(stateData.rotation);
         }
 
         if (stateData.tint === undefined) {
@@ -274,6 +277,9 @@ class Button {
         this.hover.rotation = rot;
         this.press.rotation = rot;
         this.disable.rotation = rot;
+        for (let i in this.imageRefs) {
+            this.imageRefs[i].setRotation(rot);
+        }
         if (this.text) {
             this.text.setRotation(rot);
         }
@@ -458,6 +464,12 @@ class Button {
     addText(text, font) {
         let depth = this.normal.depth ? this.normal.depth + 1 : 1;
         this.text = this.scene.add.text(this.normal.x, this.normal.y, text, font).setAlpha(this.normal.alpha).setOrigin(0.5, 0.5).setDepth(depth);
+        if (language === 'ru') {
+            this.text.setScale(0.72, 0.77);
+        } else {
+            this.text.setScale(1);
+        }
+
         return this.text;
     }
 
@@ -487,6 +499,11 @@ class Button {
     setText(text) {
         if (this.text) {
             this.text.setText(text);
+        }
+        if (language === 'ru') {
+            this.text.setScale(0.77, 0.84);
+        } else {
+            this.text.setScale(1);
         }
         return this.text;
     }
