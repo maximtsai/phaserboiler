@@ -20,7 +20,6 @@ let config = {
         roundPixels: true,
     },
     transparent: true,
-    expandParent: true,
     clearBeforeRender: false,
     parent: 'newgame',
     loader: {
@@ -206,8 +205,7 @@ function update(time, delta) {
 }
 
 function loadFileList(scene, filesList, type) {
-    for (let i in filesList) {
-        let data = filesList[i];
+    for (const data of filesList) {
         switch (type) {
             case 'audio':
                 scene.load.audio(data.name, data.src);
