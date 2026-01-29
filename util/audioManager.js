@@ -49,15 +49,16 @@ function initializeSounds(scene) {
     //     }
     //     soundList[audioData.name] = scene.sound.add(audioData.name);
     // }
-    globalVolume = localStorage.getItem("globalVolume") || 1;
+    globalVolume = sdkGetItem("globalVolume") || 1;
 
-    globalMusicVol = localStorage.getItem("globalMusicVol") || 1;
+    globalMusicVol = sdkGetItem("globalMusicVol") || 1;
 }
 
 function playSound(name, volume = 1, loop = false, isMusic = false) {
     if (!soundList[name]) {
         soundList[name] = PhaserScene.sound.add(name);
     }
+
     soundList[name].fullVolume = volume;
     soundList[name].volume = soundList[name].fullVolume * globalVolume;
     soundList[name].loop = loop;
@@ -86,6 +87,7 @@ function playSound(name, volume = 1, loop = false, isMusic = false) {
     if (isMuted) {
         soundList[name].volume = 0;
     }
+
     soundList[name].detune = 0;
     soundList[name].pan = 0;
     soundList[name].play();
@@ -120,7 +122,7 @@ function playFakeBGMusic(name, volume = 1, loop = false) {
 
 function updateGlobalVolume(newVol = 1) {
     globalVolume = newVol;
-    localStorage.setItem("globalVolume", newVol.toString());
+    sdkSetItem("globalVolume", newVol.toString())
     for (let i in soundList) {
         if (soundList[i].isPlaying) {
             if (soundList[i] !== globalMusic) {
@@ -132,7 +134,7 @@ function updateGlobalVolume(newVol = 1) {
 
 function updateGlobalMusicVolume(newVol = 1) {
     globalMusicVol = newVol;
-    localStorage.setItem("globalMusicVol", newVol.toString());
+    sdkSetItem("globalMusicVol", newVol.toString())
     if (globalMusic) {
         globalMusic.volume = globalMusic.fullVolume * newVol;
     }

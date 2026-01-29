@@ -10,7 +10,7 @@
         messageBus.subscribe("unpauseGame", this.setUnpause.bind(this));
     }
 
-    setTempPause(dur, magnitude) {
+    setTempPause(dur = 100, magnitude) {
         gameVars.timeScale = magnitude || 0.5;
         PhaserScene.tweens.timeScale = magnitude || 0.6;
         PhaserScene.time.timeScale = magnitude || 0.5;

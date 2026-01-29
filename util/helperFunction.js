@@ -82,6 +82,9 @@ function typewriterText(textObj, str, delay = 50, sfx) {
     if (str.length <= 0) {
         return;
     }
+    if (!textObj || !textObj.active) {
+        return;
+    }
     textObj.setText(textObj.text + str[0]);
     if (sfx && str[0] !== " " && str[0] !== "•") {
         playSound(sfx);

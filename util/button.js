@@ -430,6 +430,10 @@ class Button {
                 this.imageRefs[i].scrollFactorY = y;
             }
         }
+        if (this.text) {
+            this.text.scrollFactorX = x;
+            this.text.scrollFactorY = y;
+        }
     }
 
     setAlpha(alpha = 1) {

@@ -8,6 +8,10 @@ class UpdateManager {
     }
 
     update(delta) {
+        // Todo: kinda hacky way of pausing game
+        if (gameVars.timeScale < 0.01) {
+            return;
+        }
         for (let i = 0; i < this.listOfFunctions.length; i++) {
             this.listOfFunctions[i](delta);
         }
