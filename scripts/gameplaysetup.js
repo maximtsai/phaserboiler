@@ -20,19 +20,31 @@ function setupLoadingBar(scene) {
     loadObjects.loadingBarBack.setScale(200, 3);
     loadObjects.loadingBarMain.setScale(1, 3);
 
-    // Setup loading bar logic
-    scene.load.on('progress', function (value) {
-        loadObjects.loadingBarMain.scaleX = 200 * value;
-    });
-    scene.load.on('complete', () => {
-        loadObjects.loadingText.setVisible(false);
-        onLoadComplete(scene);
-        // loadObjects.fadeBG = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'blackPixel').setScale(1000).setAlpha(0.5).setDepth(-5);
+    // Use centralized loading manager with progress callback for visual feedback
+    loadingManager.setupMainLoading(
+        scene,
+        // On complete callback
+        () => {
+            loadObjects.loadingText.setVisible(false);
+            onLoadComplete(scene);
+            // loadObjects.fadeBG = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'blackPixel').setScale(1000).setAlpha(0.5).setDepth(-5);
 
-        for (let i in loadObjects) {
-            loadObjects[i].destroy();
+            for (let i in loadObjects) {
+                if (loadObjects[i] && loadObjects[i].destroy) {
+                    loadObjects[i].destroy();
+                }
+            }
+        },
+        // On progress callback - handles loading bar and text updates
+        (progress, statusText) => {
+            if (progress !== null && progress !== undefined) {
+                loadObjects.loadingBarMain.scaleX = 200 * progress;
+            }
+            if (statusText) {
+                loadObjects.loadingText.setText(`Loading... (${statusText})`);
+            }
         }
-    });
+    );
 }
 
 

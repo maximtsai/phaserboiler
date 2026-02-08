@@ -1,3 +1,14 @@
+// Global error handler to catch startup failures
+window.addEventListener('error', function(event) {
+    console.error('Global error caught:', event.error);
+    let gameDiv = document.getElementById('preload-notice');
+    if (gameDiv && !gameVars.gameConstructed) {
+        gameDiv.innerHTML = "An error occurred while loading.\nPlease refresh the page.";
+        gameDiv.style.color = '#ff6b6b';
+        gameDiv.style.fontSize = '16px';
+    }
+});
+
 let isMobile = testMobile();
 let pixelWidth = isMobile ? 594 : 604
 let pixelHeight = isMobile ? 810 : 775
@@ -38,7 +49,19 @@ let config = {
 let game;
 
 function onloadFunc() {
+    if (!document.location.href.includes(url1) && !document.location.href.includes(url2) && !document.location.href.includes(url4)) {
+        let gameDiv = document.getElementById('preload-notice');
+        let invalidSite = document.location.href.substring(0, 35);
+        gameDiv.innerHTML = invalidSite + "...\nis an invalid site.\n\n" + "Try the game on Crazygames.com!";
+        gameDiv.style.color = '#ff6b6b';
+        gameDiv.style.fontSize = '18px';
+        gameDiv.style.cursor = 'default';
+        gameDiv.onclick = null;
+        return; // Don't start the game
+    }
+
     game = new Phaser.Game(config); // var canvas = game.canvas;
+    gameVars.gameConstructed = true;
 }
 
 let gameConsts = {
@@ -105,6 +128,10 @@ function preload ()
     resizeGame();
     let gameDiv = document.getElementById('preload-notice');
     gameDiv.innerHTML = "";
+
+    // Use centralized loading manager for stall detection and retry logic
+    loadingManager.setupInitialPreload(this, gameDiv);
+
     loadFileList(this, imageFilesPreload, 'image');
     setTimeout(() => {
         resizeGame();
@@ -114,10 +141,6 @@ function preload ()
 function create ()
 {
     if (!document.location.href.includes(url1) && !document.location.href.includes(url2) && !document.location.href.includes(url4)) {
-        // Stops execution of rest of game
-        let gameDiv = document.getElementById('preload-notice');
-        let invalidSite = document.location.href.substring(0, 25);
-        gameDiv.innerHTML = invalidSite + "...\nis an invalid site.\n\n\n" + "Try the game on Crazygames.com!";
         return;
     }
     oldTime = Date.now();
@@ -127,22 +150,31 @@ function create ()
 
 function onPreloadComplete (scene)
 {
-    showHTMLBackground();
-    globalObjects.tempBG = scene.add.sprite(0, 0, 'blackPixel').setScale(1000, 1000).setDepth(-1);
+    try {
+        showHTMLBackground();
+        globalObjects.tempBG = scene.add.sprite(0, 0, 'blackPixel').setScale(1000, 1000).setDepth(-1);
 
-    setupMouseInteraction(scene);
-    setupLoadingBar(scene);
+        setupMouseInteraction(scene);
+        setupLoadingBar(scene);
 
-    loadFileList(scene, audioFiles, 'audio');
-    loadFileList(scene, imageAtlases, 'atlas');
-    loadFileList(scene, imageFiles, 'image');
-    loadFileList(scene, fontFiles, 'bitmap_font');
-    loadFileList(scene, videoFiles, 'video');
+        loadFileList(scene, audioFiles, 'audio');
+        loadFileList(scene, imageAtlases, 'atlas');
+        loadFileList(scene, imageFiles, 'image');
+        loadFileList(scene, fontFiles, 'bitmap_font');
+        loadFileList(scene, videoFiles, 'video');
 
-    scene.load.start();
+        scene.load.start();
+    } catch (error) {
+        console.error('Error in onPreloadComplete:', error);
+        // Try to continue anyway
+        setTimeout(() => {
+            onLoadComplete(scene);
+        }, 1000);
+    }
 }
 
 function onLoadComplete(scene) {
+    gameVars.gameConstructed = true;
     initializeSounds(scene);
     initializeMiscLocalstorage();
     setupGame(scene);
