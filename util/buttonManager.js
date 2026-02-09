@@ -14,11 +14,6 @@ class InternalButtonManager {
     }
 
     update(delta) {
-        // this.updateCounter += delta;
-        // if (this.updateCounter < this.updateInterval) {
-        //     return;
-        // }
-        // this.updateCounter = 0;
         let handX = gameVars.mouseposx;
         let handY = gameVars.mouseposy;
         // check hovering
@@ -37,14 +32,13 @@ class InternalButtonManager {
                 break;
             }
         }
-        if (this.lastHovered && this.lastHovered !== currentHovered && this.lastHovered.getState() !== 'disable') {
-            this.lastHovered.setState('normal');
+        if (this.lastHovered && this.lastHovered !== currentHovered && this.lastHovered.getState() !== DISABLE) {
+            this.lastHovered.setState(NORMAL);
             this.lastHovered.onHoverOut();
         }
         if (newHovered) {
             newHovered.onHover();
         }
-
 
         this.lastHovered = currentHovered;
     }
@@ -58,7 +52,7 @@ class InternalButtonManager {
             if (this.draggedObj.onDrop) {
                 this.draggedObj.onDrop(mouseX, mouseY);
             }
-            this.draggedObj = null
+            this.draggedObj = null;
         }
     }
 
@@ -91,11 +85,9 @@ class InternalButtonManager {
     }
 
     removeButton(button) {
-        for (let i in this.buttonList) {
-            if (this.buttonList[i] === button) {
-                this.buttonList.splice(parseInt(i), 1);
-                break;
-            }
+        const index = this.buttonList.indexOf(button);
+        if (index !== -1) {
+            this.buttonList.splice(index, 1);
         }
     }
 
@@ -113,4 +105,4 @@ class InternalButtonManager {
     }
 }
 
-buttonManager = new InternalButtonManager();
+const buttonManager = new InternalButtonManager();

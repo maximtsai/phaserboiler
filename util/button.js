@@ -2,16 +2,16 @@ const NORMAL = "normal";
 const HOVER = "hover";
 const PRESS = "press";
 const DISABLE = "disable";
+
 class Button {
     /**
-     * Createt a button with some parameters
+     * Create a button with some parameters
      *
      * data = {normal: ..., press: ...}
      *
      * Possible parameters: scene, normal, hover, press, disable, onMouseUp, onHover, onDrop, isDraggable
      */
     constructor(data) {
-        // scene, onMouseUp, onDragnormal, hover, press, disable
         this.scene = data.scene || PhaserScene;
         this.state = NORMAL;
         this.normal = data.normal;
@@ -78,9 +78,6 @@ class Button {
                     newImage.scrollFactorX = oldImage.scrollFactorX;
                     newImage.scrollFactorY = oldImage.scrollFactorY;
                 }
-                // if (this.cursorInteractive) {
-                //     newImage.setInteractive({ useHandCursor: 'pointer' });
-                // }
                 newImage.setDepth(this.depth);
                 this.imageRefs[stateData.ref] = newImage;
             }
@@ -147,25 +144,13 @@ class Button {
         } else {
             this.imageRefs[stateData.ref].setTint(stateData.tint);
         }
-        // if (this.text) {
-        //     if (newState === DISABLE) {
-        //         this.text.visible = false;
-        //     } else {
-        //         this.text.visible = true;
-        //     }
-        // }
     }
 
     setVisible(vis = true) {
-        for (let i in this.imageRefs) {
-            this.imageRefs[i].setVisible(vis);
-        }
-        if (vis === false) {
-            this.forceInvis = true;
-        } else {
-            this.forceInvis = false;
-        }
-
+        Object.keys(this.imageRefs).forEach(key => {
+            this.imageRefs[key].setVisible(vis);
+        });
+        this.forceInvis = !vis;
     }
 
     checkCoordOver(valX, valY) {
@@ -174,9 +159,8 @@ class Button {
         }
         let scrollFactorX = this.normal.scrollFactorX !== undefined ? this.normal.scrollFactorX : 1;
         let scrollFactorY = this.normal.scrollFactorY !== undefined ? this.normal.scrollFactorY : 1;
-        //let scrollFactorY = this.normal.scrollFactorY !== undefined ? this.normal.scrollFactorY : 1;
         let x = valX + PhaserScene.cameras.main.scrollX * scrollFactorX;
-        let y = valY + PhaserScene.cameras.main.scrollY * scrollFactorY; //  + PhaserScene.cameras.main.scrollY
+        let y = valY + PhaserScene.cameras.main.scrollY * scrollFactorY;
         let currImage = this.imageRefs[this.currImageRef];
         let width = currImage.width * Math.abs(currImage.scaleX);
         let height = currImage.height * Math.abs(currImage.scaleY);
@@ -188,7 +172,7 @@ class Button {
         let topMost = currImage.y - currImage.originY * height;
         let botMost = currImage.y + (1 - currImage.originY) * height;
         if (y < topMost || y > botMost) {
-            return false
+            return false;
         }
         return true;
     }
@@ -216,13 +200,12 @@ class Button {
                 this.onMouseDownFunc(x, y);
             }
             if (this.isDraggable) {
-                // Add to update
                 if (!this.isDragged) {
                     this.setPos(gameVars.mouseposx + PhaserScene.cameras.main.scrollX, gameVars.mouseposy + PhaserScene.cameras.main.scrollY);
                     this.isDragged = true;
                     let oldDraggedObj = buttonManager.getDraggedObj();
                     if (oldDraggedObj && oldDraggedObj.onDrop) {
-                        oldDraggedObj.onDrop().bind();
+                        oldDraggedObj.onDrop(x, y);
                     }
                     buttonManager.setDraggedObj(this);
                 }
@@ -267,9 +250,9 @@ class Button {
         if (this.text) {
             this.text.setDepth(depth + 1);
         }
-        for (let i in this.imageRefs) {
-            this.imageRefs[i].setDepth(depth);
-        }
+        Object.keys(this.imageRefs).forEach(key => {
+            this.imageRefs[key].setDepth(depth);
+        });
     }
 
     setRotation(rot) {
@@ -277,9 +260,9 @@ class Button {
         this.hover.rotation = rot;
         this.press.rotation = rot;
         this.disable.rotation = rot;
-        for (let i in this.imageRefs) {
-            this.imageRefs[i].setRotation(rot);
-        }
+        Object.keys(this.imageRefs).forEach(key => {
+            this.imageRefs[key].setRotation(rot);
+        });
         if (this.text) {
             this.text.setRotation(rot);
         }
@@ -342,7 +325,7 @@ class Button {
     }
 
     setOnHoverFunc(func) {
-        this.onHover = func;
+        this.onHoverFunc = func;
     }
 
     setOnHoverOutFunc(func) {
@@ -395,18 +378,18 @@ class Button {
             this.hover.x = x;
             this.press.x = x;
             this.disable.x = x;
-            for (let i in this.imageRefs) {
-                this.imageRefs[i].x = x;
-            }
+            Object.keys(this.imageRefs).forEach(key => {
+                this.imageRefs[key].x = x;
+            });
         }
         if (y !== undefined) {
             this.normal.y = y;
             this.hover.y = y;
             this.press.y = y;
             this.disable.y = y;
-            for (let i in this.imageRefs) {
-                this.imageRefs[i].y = y;
-            }
+            Object.keys(this.imageRefs).forEach(key => {
+                this.imageRefs[key].y = y;
+            });
         }
     }
 
@@ -417,18 +400,18 @@ class Button {
             this.hover.scrollFactorX = x;
             this.press.scrollFactorX = x;
             this.disable.scrollFactorX = x;
-            for (let i in this.imageRefs) {
-                this.imageRefs[i].scrollFactorX = x;
-            }
+            Object.keys(this.imageRefs).forEach(key => {
+                this.imageRefs[key].scrollFactorX = x;
+            });
         }
         if (y !== undefined) {
             this.normal.scrollFactorY = y;
             this.hover.scrollFactorY = y;
             this.press.scrollFactorY = y;
             this.disable.scrollFactorY = y;
-            for (let i in this.imageRefs) {
-                this.imageRefs[i].scrollFactorY = y;
-            }
+            Object.keys(this.imageRefs).forEach(key => {
+                this.imageRefs[key].scrollFactorY = y;
+            });
         }
         if (this.text) {
             this.text.scrollFactorX = x;
@@ -437,43 +420,40 @@ class Button {
     }
 
     setAlpha(alpha = 1) {
-        for (let i in this.imageRefs) {
-            this.imageRefs[i].alpha = alpha;
-        }
+        Object.keys(this.imageRefs).forEach(key => {
+            this.imageRefs[key].alpha = alpha;
+        });
     }
 
     setScale(scaleX, scaleY) {
         if (scaleY === undefined) {
             scaleY = scaleX;
         }
-        for (let i in this.imageRefs) {
-            this.imageRefs[i].scaleX = scaleX;
-            this.imageRefs[i].scaleY = scaleY;
-        }
-    }
-
-    bringToTop() {
-        // for (let i in this.imageRefs) {
-        //     this.container.bringToTop(this.imageRefs[i]);
-        // }
+        Object.keys(this.imageRefs).forEach(key => {
+            this.imageRefs[key].scaleX = scaleX;
+            this.imageRefs[key].scaleY = scaleY;
+        });
     }
 
     setOrigin(origX, origY) {
-        for (let i in this.imageRefs) {
-            this.imageRefs[i].setOrigin(origX, origY);
-        }
+        Object.keys(this.imageRefs).forEach(key => {
+            this.imageRefs[key].setOrigin(origX, origY);
+        });
         return this;
     }
 
-    addText(text, font) {
-        let depth = this.normal.depth ? this.normal.depth + 1 : 1;
-        this.text = this.scene.add.text(this.normal.x, this.normal.y, text, font).setAlpha(this.normal.alpha).setOrigin(0.5, 0.5).setDepth(depth);
+    _applyRussianTextScale() {
         if (language === 'ru') {
             this.text.setScale(0.72, 0.77);
         } else {
             this.text.setScale(1);
         }
+    }
 
+    addText(text, font) {
+        let depth = this.normal.depth ? this.normal.depth + 1 : 1;
+        this.text = this.scene.add.text(this.normal.x, this.normal.y, text, font).setAlpha(this.normal.alpha).setOrigin(0.5, 0.5).setDepth(depth);
+        this._applyRussianTextScale();
         return this.text;
     }
 
@@ -521,7 +501,7 @@ class Button {
             onComplete: () => {
                 this.setPos(x, y);
             }
-        }
+        };
         if (x !== undefined) {
             tweenObj.x = x;
         }
@@ -544,7 +524,7 @@ class Button {
                     onComplete();
                 }
             }
-        }
+        };
         if (x !== undefined) {
             tweenObj.scaleX = x;
         }
@@ -566,7 +546,7 @@ class Button {
                     onComplete();
                 }
             }
-        }
+        };
         this.scene.tweens.add(tweenObj);
     }
 
@@ -603,8 +583,8 @@ class Button {
             this.text.destroy();
         }
 
-        for (let i in this.imageRefs) {
-            this.imageRefs[i].destroy();
-        }
+        Object.keys(this.imageRefs).forEach(key => {
+            this.imageRefs[key].destroy();
+        });
     }
 }
