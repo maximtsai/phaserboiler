@@ -491,3 +491,41 @@ function fadeBackground() {
     background.style['animation-name'] = 'fadeAway';
     background.style['animation-duration'] = CONSTANTS.BACKGROUND_FADE_DURATION_LONG + 's';
 }
+
+let canResizeGame = true;
+function resizeGame() {
+    if (!canResizeGame) {
+        return;
+    }
+    if (!game) {
+        return;
+    }
+    if (!game.canvas) {
+        return;
+    }
+    var canvas = game.canvas;
+    var windowWidth = window.innerWidth;
+    var windowHeight = window.innerHeight;
+    var windowRatio = windowWidth / windowHeight;
+    var gameRatio = game.config.width / game.config.height;
+    var gameScale = 1;
+    let background = document.getElementById('background');
+    if (windowRatio < gameRatio) {
+        canvas.style.width = windowWidth + "px";
+        canvas.style.height = windowWidth / gameRatio + "px";
+        gameScale = windowWidth / game.config.width;
+        gameVars.canvasXOffset = 0;
+        gameVars.canvasYOffset = (windowHeight - game.config.height * gameScale) * 0.5;
+        background.style.opacity = '0';
+    } else {
+        canvas.style.width = windowHeight * gameRatio + "px";
+        canvas.style.height = windowHeight + "px";
+        gameScale = windowHeight / game.config.height;
+        gameVars.canvasYOffset = 0;
+        gameVars.canvasXOffset = (windowWidth - game.config.width * gameScale) * 0.5;
+        background.style.opacity = '1';
+    }
+    gameVars.gameScale = gameScale;
+
+    handleBorders();
+}
