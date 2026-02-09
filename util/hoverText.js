@@ -4,28 +4,13 @@ class InternalHoverTextManager {
         this.hoverTextList = [];
         this.lastHovered = null;
 
-
-        // messageBus.subscribe("pointerUp", this.onPointerUp.bind(this));
         messageBus.subscribe("pointerMove", this.onPointerMove.bind(this));
         messageBus.subscribe("pointerDown", this.onPointerDown.bind(this));
     }
 
     update(delta) {
-
+        // Placeholder for future use
     }
-
-    // onPointerUp(mouseX, mouseY) {
-    //     let hoverTextObj = this.getLastClickedButton();
-    //     if (hoverTextObj && hoverTextObj.checkCoordOver(mouseX, mouseY)) {
-    //         hoverTextObj.onMouseUp();
-    //     }
-    //     if (this.draggedObj) {
-    //         if (this.draggedObj.onDrop) {
-    //             this.draggedObj.onDrop();
-    //         }
-    //         this.draggedObj = null
-    //     }
-    // }
 
     onPointerMove(mouseX, mouseY) {
         let handX = gameVars.mouseposx;
@@ -40,23 +25,11 @@ class InternalHoverTextManager {
                 if (this.lastHovered !== currentHovered && currentHovered.onHover) {
                     currentHovered.onHover();
                 }
-                // let posX = hoverTextObj.displayX ? hoverTextObj.displayX : mouseX;
-                // let posY = hoverTextObj.displayY ? hoverTextObj.displayY : mouseY;
-                // this.hoverBacking.x = posX; this.hoverBacking.y = posY;
-                // this.hoverBacking.setOrigin(hoverTextObj.originX, hoverTextObj.originY);
-                // this.hoverTextDisplay.x = this.hoverBacking.x + 2 * (1 - hoverTextObj.originX * 2 - 2);
-                // this.hoverTextDisplay.y = this.hoverBacking.y - (hoverTextObj.originX * 2 - 1);
-                // this.hoverTextDisplay.setText(hoverTextObj.text);
-                // this.hoverTextDisplay.visible = true;
-                // this.hoverTextDisplay.setOrigin(hoverTextObj.originX, hoverTextObj.originY);
-                // this.hoverBacking.visible = true;
-                // this.hoverBacking.setScale((this.hoverTextDisplay.width + 13) * 0.5 * this.hoverTextDisplay.scaleX, (this.hoverTextDisplay.height + 10) * 0.5 * this.hoverTextDisplay.scaleY);
                 break;
             }
         }
+        
         if (this.lastHovered && this.lastHovered !== currentHovered) {
-            // this.hoverTextDisplay.visible = false;
-            // this.hoverBacking.visible = false;
             if (this.lastHovered.onHoverOut) {
                 this.lastHovered.onHoverOut();
             }
@@ -74,29 +47,31 @@ class InternalHoverTextManager {
     }
 
     removeHoverText(button) {
-        for (let i in this.hoverTextList) {
-            if (this.hoverTextList[i] === button) {
-                this.hoverTextList.splice(parseInt(i), 1);
-                break;
-            }
+        const index = this.hoverTextList.indexOf(button);
+        if (index !== -1) {
+            this.hoverTextList.splice(index, 1);
         }
     }
 }
 
-// hoverTextManager = new InternalHoverTextManager();
 class HoverDisplay {
     constructor(data) {
         this.hoverBacking = PhaserScene.add.sprite(-3, 0, 'pixels', 'semiblack_pixel.png');
         this.hoverBacking.visible = false;
         this.hoverBacking.setDepth(data.depth || 9992);
 
-        // this.hoverTextDisplay = PhaserScene.add.bitmapText(0, 0, 'plainBold', '', isMobile ? 19 : 18);
-        this.hoverTextDisplay = PhaserScene.add.text(0, 0, ' ', {fontFamily: 'robotomedium', fontSize: isMobile ? 20 : 19, color: '#FFFFBB', align: 'left'});
+        const fontSize = (typeof isMobile !== 'undefined' && isMobile) ? 20 : 19;
+        this.hoverTextDisplay = PhaserScene.add.text(0, 0, ' ', {
+            fontFamily: 'robotomedium', 
+            fontSize: fontSize, 
+            color: '#FFFFBB', 
+            align: 'left'
+        });
         this.hoverTextDisplay.visible = false;
         this.hoverTextDisplay.setDepth(data.depth || 9992);
 
         this.setOrigin(data.originX, data.originY);
-        this.setPosition(data.x, data.y)
+        this.setPosition(data.x, data.y);
         this.hoverTextDisplay.setOrigin(data.originX, 0.5);
         this.stopAudioTemp = true;
     }
@@ -108,7 +83,7 @@ class HoverDisplay {
         let tweenParams = {
             targets: [this.hoverBacking, this.hoverTextDisplay],
             duration: 100,
-        }
+        };
         tweenParams = {...tweenParams, ...tweenObj};
         this.currTween = PhaserScene.tweens.add(tweenParams);
     }
@@ -118,7 +93,8 @@ class HoverDisplay {
     }
 
     setPosition(x, y) {
-        this.hoverBacking.x = x - 3; this.hoverBacking.y = y;
+        this.hoverBacking.x = x - 3;
+        this.hoverBacking.y = y;
         this.hoverTextDisplay.x = this.hoverBacking.x + 3 * (1 - this.hoverBacking.originX * 2 - (this.hoverBacking.originX - 0.5) * 4);
         this.hoverTextDisplay.y = this.hoverBacking.y - this.hoverTextDisplay.height * 0.5 * (this.hoverBacking.originY * 2 - 1) - 3;
     }
@@ -126,9 +102,9 @@ class HoverDisplay {
     setOrigin(x = 0.5, y = 0.5) {
         this.hoverBacking.setOrigin(x, y);
         this.hoverTextDisplay.setOrigin(x, 0.5);
-        if (x == 0) {
+        if (x === 0) {
             this.hoverTextDisplay.setAlign('left');
-        } else if (x == 1) {
+        } else if (x === 1) {
             this.hoverTextDisplay.setAlign('right');
         } else {
             this.hoverTextDisplay.setAlign('center');
@@ -138,12 +114,15 @@ class HoverDisplay {
     getText() {
         return this.hoverTextDisplay.text;
     }
+
     setAlign(align) {
         this.hoverTextDisplay.setAlign(align);
     }
+
     stopNextAudio() {
         this.stopAudioTemp = true;
     }
+
     getStopNextAudio() {
         if (this.stopAudioTemp) {
             this.stopAudioTemp = false;
@@ -157,7 +136,11 @@ class HoverDisplay {
             return;
         }
         this.hoverTextDisplay.setText(text);
-        if (gameOptions.infoBoxAlign == "left") {
+        
+        const isMobileDevice = typeof isMobile !== 'undefined' && isMobile;
+        const infoBoxAlign = typeof gameOptions !== 'undefined' && gameOptions.infoBoxAlign ? gameOptions.infoBoxAlign : 'center';
+        
+        if (infoBoxAlign === "left") {
             if (this.hoverTextDisplay.width > 170) {
                 this.hoverTextDisplay.setFontSize(17);
             } else {
@@ -167,19 +150,19 @@ class HoverDisplay {
             if (this.hoverTextDisplay.text.length > 80) {
                 this.hoverTextDisplay.setFontSize(18);
             } else {
-                this.hoverTextDisplay.setFontSize(isMobile ? 20 : 19);
+                this.hoverTextDisplay.setFontSize(isMobileDevice ? 20 : 19);
             }
         }
 
         this.hoverTextDisplay.x = this.hoverBacking.x + 3 * (1 - this.hoverBacking.originX * 2 - (this.hoverBacking.originX - 0.5) * 4);
         this.hoverTextDisplay.y = this.hoverBacking.y - this.hoverTextDisplay.height * 0.5 * (this.hoverBacking.originY * 2 - 1) - 3;
 
-        this.hoverBacking.setScale((this.hoverTextDisplay.width + 13) * 0.5 * this.hoverTextDisplay.scaleX + 3, (this.hoverTextDisplay.height + 4) * 0.5 * this.hoverTextDisplay.scaleY);
-        if (text.length > 0) {
-            this.setVisible(true);
-        } else {
-            this.setVisible(false);
-        }
+        this.hoverBacking.setScale(
+            (this.hoverTextDisplay.width + 13) * 0.5 * this.hoverTextDisplay.scaleX + 3, 
+            (this.hoverTextDisplay.height + 4) * 0.5 * this.hoverTextDisplay.scaleY
+        );
+        
+        this.setVisible(text.length > 0);
     }
 
     setAlpha(val) {
@@ -218,20 +201,19 @@ class HoverText {
         this.originX = data.displayOrigin ? data.displayOrigin.x : 0;
         this.originY = data.displayOrigin ? data.displayOrigin.y : 0;
 
-
-        globalObjects.hoverTextManager.addToHoverTextList(this);
+        if (globalObjects.hoverTextManager) {
+            globalObjects.hoverTextManager.addToHoverTextList(this);
+        }
 
         this.depth = 0;
     }
-
-
 
     checkCoordOver(x, y) {
         if (x < this.x || x > this.endX) {
             return false;
         }
         if (y < this.y || y > this.endY) {
-            return false
+            return false;
         }
         return true;
     }
@@ -271,16 +253,12 @@ class HoverText {
         this.endY = this.y + this.height;
     }
 
-
     bringToTop() {
-        console.log("TODO")
-        // for (let i in this.imageRefs) {
-        //     this.container.bringToTop(this.imageRefs[i]);
-        // }
+        console.warn("HoverText.bringToTop() not yet implemented");
     }
 
     setOrigin(origX, origY) {
-        console.log("todo");
+        console.warn("HoverText.setOrigin() not yet implemented");
     }
 
     destroy() {
@@ -288,7 +266,8 @@ class HoverText {
             return;
         }
         this.isDestroyed = true;
-        globalObjects.hoverTextManager.removeHoverText(this);
+        if (globalObjects.hoverTextManager) {
+            globalObjects.hoverTextManager.removeHoverText(this);
+        }
     }
 }
-
