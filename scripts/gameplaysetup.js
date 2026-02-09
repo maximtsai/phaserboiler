@@ -6,19 +6,19 @@ function setupLoadingBar(scene) {
     // fadeInBackground('backgroundPreload', 5000, 3.28);
 
     // Basic loading bar visual
-    loadObjects.version = scene.add.text(4, gameConsts.height - 4, gameVersion).setOrigin(0, 1).setAlpha(0.7);
+    loadObjects.version = scene.add.text(CONSTANTS.VERSION_PADDING_X, gameConsts.height - CONSTANTS.VERSION_PADDING_X, gameVersion).setOrigin(0, 1).setAlpha(0.7);
     loadObjects.version.scrollFactorX = 0; loadObjects.version.scrollFactorY = 0;
 
-    loadObjects.loadingText = scene.add.text(gameConsts.halfWidth, gameConsts.height - (isMobile ? 342 : 328), 'Loading...', {fontFamily: 'garamondbold', fontSize: 36, color: '#FFFFFF', align: 'center'}).setDepth(1001);
-    loadObjects.loadingText.setScale(0.6).setAlpha(0.93);
+    loadObjects.loadingText = scene.add.text(gameConsts.halfWidth, gameConsts.height - (isMobile ? CONSTANTS.LOADING_TEXT_MOBILE_Y : CONSTANTS.LOADING_TEXT_DESKTOP_Y), 'Loading...', {fontFamily: 'garamondbold', fontSize: 36, color: '#FFFFFF', align: 'center'}).setDepth(CONSTANTS.LOADING_TEXT_DEPTH);
+    loadObjects.loadingText.setScale(CONSTANTS.LOADING_TEXT_SCALE).setAlpha(CONSTANTS.LOADING_TEXT_ALPHA);
     loadObjects.loadingText.setAlign('center');
     loadObjects.loadingText.setOrigin(0.5, 0);
     loadObjects.loadingText.scrollFactorX = 0.3; loadObjects.loadingText.scrollFactorY = 0.3;
-    loadObjects.loadingBarBack = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight + 100, 'whitePixel').setAlpha(0.5);
-    loadObjects.loadingBarMain = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight + 100, 'whitePixel');
+    loadObjects.loadingBarBack = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight + CONSTANTS.LOADING_BAR_OFFSET_Y, 'whitePixel').setAlpha(0.5);
+    loadObjects.loadingBarMain = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight + CONSTANTS.LOADING_BAR_OFFSET_Y, 'whitePixel');
 
-    loadObjects.loadingBarBack.setScale(200, 3);
-    loadObjects.loadingBarMain.setScale(1, 3);
+    loadObjects.loadingBarBack.setScale(CONSTANTS.LOADING_BAR_WIDTH, CONSTANTS.LOADING_BAR_HEIGHT);
+    loadObjects.loadingBarMain.setScale(1, CONSTANTS.LOADING_BAR_HEIGHT);
 
     // Use centralized loading manager with progress callback for visual feedback
     loadingManager.setupMainLoading(
@@ -38,7 +38,7 @@ function setupLoadingBar(scene) {
         // On progress callback - handles loading bar and text updates
         (progress, statusText) => {
             if (progress !== null && progress !== undefined) {
-                loadObjects.loadingBarMain.scaleX = 200 * progress;
+                loadObjects.loadingBarMain.scaleX = CONSTANTS.LOADING_BAR_WIDTH * progress;
             }
             if (statusText) {
                 loadObjects.loadingText.setText(`Loading... (${statusText})`);
@@ -55,14 +55,14 @@ function clickIntro() {
         targets: PhaserScene.cameras.main,
         scrollX: 0,
         scrollY: 0,
-        duration: 750,
+        duration: CONSTANTS.CAMERA_TWEEN_DURATION,
         ease: 'Cubic.easeOut'
     });
 
     PhaserScene.tweens.add({
         targets: [loadObjects.loadingText2, loadObjects.loadingText3],
         alpha: 0,
-        duration: 800,
+        duration: CONSTANTS.TEXT_FADE_DURATION,
         ease: 'Quad.easeOut'
     });
 
@@ -72,22 +72,22 @@ function clickIntro() {
         PhaserScene.tweens.add({
             targets: loadObjects.glowBG,
             alpha: 1,
-            duration: 900,
+            duration: CONSTANTS.INTRO_GLOW_DURATION,
             ease: 'Quart.easeIn',
             onComplete: () => {
                 this.skipIntro();
             }
         });
-        loadObjects.glowBG.setScale(14);
+        loadObjects.glowBG.setScale(CONSTANTS.INTRO_GLOW_SCALE);
 
     } else {
         PhaserScene.tweens.add({
-            delay: 1500,
+            delay: CONSTANTS.INTRO_GLOW_DELAY,
             targets: loadObjects.glowBG,
-            alpha: 1.25,
-            scaleX: 14,
-            scaleY: 14,
-            duration: 500,
+            alpha: CONSTANTS.INTRO_GLOW_ALPHA,
+            scaleX: CONSTANTS.INTRO_GLOW_SCALE,
+            scaleY: CONSTANTS.INTRO_GLOW_SCALE,
+            duration: CONSTANTS.INTRO_GLOW_DURATION,
             ease: 'Quart.easeIn',
             onComplete: () => {
                 cleanupIntro(PhaserScene);
@@ -95,14 +95,14 @@ function clickIntro() {
         });
     }
 
-    loadObjects.skipIntroText = PhaserScene.add.text(gameConsts.width - 5, gameConsts.height - 5, getLangText('click_to_skip'), {fontFamily: 'verdana', fontSize: 18, color: '#FFFFFF', align: 'right'}).setDepth(1005).setAlpha(0).setOrigin(1, 1);
+    loadObjects.skipIntroText = PhaserScene.add.text(gameConsts.width - CONSTANTS.SKIP_TEXT_OFFSET, gameConsts.height - CONSTANTS.SKIP_TEXT_OFFSET, getLangText('click_to_skip'), {fontFamily: 'verdana', fontSize: 18, color: '#FFFFFF', align: 'right'}).setDepth(CONSTANTS.SKIP_TEXT_DEPTH).setAlpha(0).setOrigin(1, 1);
     // loadObjects.loadingText.setText(" ").setAlpha(0).setScale(0.75).y -= 18;
-    loadObjects.whiteOverall = PhaserScene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'whitePixel').setDepth(2000).setAlpha(0).setScale(1000);
+    loadObjects.whiteOverall = PhaserScene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'whitePixel').setDepth(CONSTANTS.WHITE_OVERLAY_DEPTH).setAlpha(0).setScale(CONSTANTS.BACKGROUND_SCALE);
     PhaserScene.tweens.add({
         targets: loadObjects.whiteOverall,
-        alpha: 0.75,
+        alpha: CONSTANTS.INTRO_WHITE_OVERLAY_ALPHA,
         ease: 'Quad.easeIn',
-        duration: 2100
+        duration: CONSTANTS.INTRO_WHITE_OVERLAY_DURATION
     });
 }
 
@@ -111,11 +111,11 @@ function cleanupIntro() {
         return;
     }
     gameVars.introFinished = true;
-    tempBG = PhaserScene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'whitePixel').setScale(1000).setAlpha(0.85).setDepth(1002);
+    tempBG = PhaserScene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'whitePixel').setScale(CONSTANTS.BACKGROUND_SCALE).setAlpha(CONSTANTS.INTRO_TEMP_BG_ALPHA).setDepth(CONSTANTS.TEMP_BG_DEPTH);
     PhaserScene.tweens.add({
         targets: tempBG,
         alpha: 0,
-        duration: 750,
+        duration: CONSTANTS.INTRO_TEMP_BG_DURATION,
         onComplete: () => {
             tempBG.destroy();
         }

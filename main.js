@@ -10,17 +10,17 @@ window.addEventListener('error', function(event) {
 });
 
 let isMobile = testMobile();
-let pixelWidth = isMobile ? 594 : 604
-let pixelHeight = isMobile ? 810 : 775
+let pixelWidth = isMobile ? CONSTANTS.MOBILE_WIDTH : CONSTANTS.DESKTOP_WIDTH;
+let pixelHeight = isMobile ? CONSTANTS.MOBILE_HEIGHT : CONSTANTS.DESKTOP_HEIGHT;
 handleBorders();
-let gameVersion = "v.1.0";
+let gameVersion = CONSTANTS.GAME_VERSION;
 let config = {
     type: Phaser.AUTO,
     scale: {
         parent: 'newgame',
         autoRound: true,
         width: pixelWidth,
-        height: isMobile ? 810 : 775,
+        height: isMobile ? CONSTANTS.MOBILE_HEIGHT : CONSTANTS.DESKTOP_HEIGHT,
         orientation: 'landscape',
         mode: Phaser.Scale.FIT,
         forceLandscape: true
@@ -51,7 +51,7 @@ let game;
 function onloadFunc() {
     if (!document.location.href.includes(url1) && !document.location.href.includes(url2) && !document.location.href.includes(url4)) {
         let gameDiv = document.getElementById('preload-notice');
-        let invalidSite = document.location.href.substring(0, 35);
+        let invalidSite = document.location.href.substring(0, CONSTANTS.URL_SUBSTRING_LENGTH);
         gameDiv.innerHTML = invalidSite + "...\nis an invalid site.\n\n" + "Try the game on Crazygames.com!";
         gameDiv.style.color = '#ff6b6b';
         gameDiv.style.fontSize = '18px';
@@ -102,7 +102,7 @@ let PhaserScene = null; // Global
 let oldTime = 0;
 let deltaScale = 1;
 let timeUpdateCounter = 0;
-let timeUpdateCounterMax = 3;
+let timeUpdateCounterMax = CONSTANTS.TIME_UPDATE_MAX;
 let url1 = 'localhost';// 'crazygames';
 let url2 = 'maximtsai';// 'localhost';
 let url3 = 'ground';// '1001juegos';
@@ -135,7 +135,7 @@ function preload ()
     loadFileList(this, imageFilesPreload, 'image');
     setTimeout(() => {
         resizeGame();
-    }, 100)
+    }, CONSTANTS.SMALL_TIMEOUT)
 }
 
 function create ()
@@ -152,7 +152,7 @@ function onPreloadComplete (scene)
 {
     try {
         showHTMLBackground();
-        globalObjects.tempBG = scene.add.sprite(0, 0, 'blackPixel').setScale(1000, 1000).setDepth(-1);
+        globalObjects.tempBG = scene.add.sprite(0, 0, 'blackPixel').setScale(CONSTANTS.BACKGROUND_SCALE, CONSTANTS.BACKGROUND_SCALE).setDepth(-1);
 
         setupMouseInteraction(scene);
         setupLoadingBar(scene);
@@ -169,7 +169,7 @@ function onPreloadComplete (scene)
         // Try to continue anyway
         setTimeout(() => {
             onLoadComplete(scene);
-        }, 1000);
+        }, CONSTANTS.LARGE_TIMEOUT);
     }
 }
 
@@ -212,7 +212,7 @@ function update(time, delta) {
         let newTime = Date.now();
         let deltaTime = newTime - oldTime;
         oldTime = newTime;
-        deltaScale = Math.min(5, deltaTime / 100);
+        deltaScale = Math.min(5, deltaTime / CONSTANTS.DELTA_TIME_BASE);
         lastUpdateValues[lastUpdateValuesIdx] = deltaScale;
         lastUpdateValuesIdx = (lastUpdateValuesIdx + 1) % 5;
         avgDeltaScale = 0;
@@ -279,14 +279,14 @@ function screenShake(amt, durMultManual = 1) {
         targets: PhaserScene.cameras.main,
         scrollX: amt,
         ease: "Quint.easeOut",
-        duration: 50*durMult,
+        duration: CONSTANTS.SHAKE_DURATION_SHORT * durMult,
         onComplete: () => {
             PhaserScene.tweens.add({
                 targets: PhaserScene.cameras.main,
                 scrollX: 0,
                 ease: "Bounce.easeOut",
-                easeParams: [3],
-                duration: 150*durMult,
+                easeParams: [CONSTANTS.SHAKE_BOUNCE_PARAM],
+                duration: CONSTANTS.SHAKE_DURATION_LONG * durMult,
             });
         }
     });
@@ -304,14 +304,14 @@ function screenShakeLong(amt) {
         targets: PhaserScene.cameras.main,
         scrollX: amt,
         ease: "Quint.easeOut",
-        duration: 150*durMult,
+        duration: CONSTANTS.SHAKE_DURATION_LONG * durMult,
         onComplete: () => {
             PhaserScene.tweens.add({
                 targets: PhaserScene.cameras.main,
                 scrollX: 0,
                 ease: "Bounce.easeOut",
-                easeParams: [3],
-                duration: 400*durMult,
+                easeParams: [CONSTANTS.SHAKE_BOUNCE_PARAM],
+                duration: CONSTANTS.SHAKE_DURATION_EXTRA_LONG * durMult,
             });
         }
     });
@@ -329,20 +329,20 @@ function screenShakeManual(amt, durMultManual = 1) {
         targets: PhaserScene.cameras.main,
         scrollX: amt,
         ease: "Quint.easeOut",
-        duration: 50*durMult,
+        duration: CONSTANTS.SHAKE_DURATION_SHORT * durMult,
         onComplete: () => {
             PhaserScene.tweens.add({
                 targets: PhaserScene.cameras.main,
                 scrollX: -amt * 0.9,
                 ease: "Quint.easeInOut",
-                duration: 50*durMult,
+                duration: CONSTANTS.SHAKE_DURATION_SHORT * durMult,
                 onComplete: () => {
                     PhaserScene.tweens.add({
                         targets: PhaserScene.cameras.main,
                         scrollX: 0,
                         ease: "Bounce.easeOut",
-                        easeParams: [3],
-                        duration: 150*durMult,
+                        easeParams: [CONSTANTS.SHAKE_BOUNCE_PARAM],
+                        duration: CONSTANTS.SHAKE_DURATION_LONG * durMult,
                     });
                 }
             });
@@ -356,7 +356,7 @@ function zoomTemp(zoomAmt) {
         targets: PhaserScene.cameras.main,
         zoom: 1,
         ease: "Cubic.easeOut",
-        duration: 200
+        duration: CONSTANTS.ZOOM_DURATION_FAST
     });
 }
 
@@ -365,13 +365,13 @@ function zoomTempSlow(zoomAmt) {
         targets: PhaserScene.cameras.main,
         zoom: zoomAmt,
         ease: "Cubic.easeIn",
-        duration: 40,
+        duration: CONSTANTS.ZOOM_DURATION_SLOW_IN,
         onComplete: () => {
             PhaserScene.tweens.add({
                 targets: PhaserScene.cameras.main,
                 zoom: 1,
                 ease: "Cubic.easeOut",
-                duration: 300
+                duration: CONSTANTS.ZOOM_DURATION_SLOW_OUT
             });
         }
     });
@@ -406,10 +406,10 @@ function handleBorders() {
     //block
 
 
-    let widthAmt = 86 * gameScale
+    let widthAmt = CONSTANTS.BORDER_WIDTH_FACTOR * gameScale;
     leftBorder.style.width = widthAmt + 'px';
     rightBorder.style.width = widthAmt + 'px';
-    let shiftAmt = pixelWidth * gameScale * 0.5 + widthAmt - 2;
+    let shiftAmt = pixelWidth * gameScale * 0.5 + widthAmt - CONSTANTS.BORDER_SHIFT_OFFSET;
     leftBorder.style.left = 'calc(50% - ' + shiftAmt + 'px)'
     rightBorder.style.right = 'calc(50% - ' + shiftAmt + 'px)'
 }
@@ -442,7 +442,7 @@ function switchBackground(newBG) {
     }
     let background = document.getElementById('background');
     background.style['animation-name'] = 'fadeAway';
-    background.style['animation-duration'] = '1.5s';
+    background.style['animation-duration'] = CONSTANTS.BACKGROUND_FADE_DURATION + 's';
     background.style.opacity = '0';
     setTimeout(() => {
         currBackground = newBG;
@@ -456,7 +456,7 @@ function switchBackground(newBG) {
             background.style['animation-name'] = 'changeShadow';
             background.style.opacity = '1';
         }
-    }, 1400)
+    }, CONSTANTS.BACKGROUND_SWITCH_DELAY)
 }
 
 function switchBackgroundInstant(newBG) {
@@ -475,7 +475,7 @@ function switchBackgroundInstant(newBG) {
     if (windowRatio >= gameRatio) {
         background.style.opacity = '1';
     }
-    background.style['animation-duration'] = '0.5s';
+    background.style['animation-duration'] = CONSTANTS.BACKGROUND_ANIMATION_FAST + 's';
     background.style['animation-name'] = 'fastChange';
 
 }
@@ -489,5 +489,5 @@ function fadeBackground() {
     let background = document.getElementById('background');
     background.style.opacity = '0';
     background.style['animation-name'] = 'fadeAway';
-    background.style['animation-duration'] = '3s';
+    background.style['animation-duration'] = CONSTANTS.BACKGROUND_FADE_DURATION_LONG + 's';
 }
