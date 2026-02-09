@@ -1,9 +1,18 @@
 // audiomanager
-let soundList = [];
-globalVolume = 1;
-globalMusicVol = 1;
-globalMusic = null;
-globalTempMusic = null;
+const AUDIO_CONSTANTS = {
+    LONG_SOUND_THRESHOLD: 3.5,
+    FADE_AWAY_DURATION: 650,
+    FADE_IN_DURATION: 1000,
+    FADE_IN_DELAY: 100,
+    MUSIC_START_VOLUME: 0.1,
+    DEFAULT_MUSIC_VOLUME: 0.85,
+};
+
+let soundList = {};  // Fixed: Changed from [] to {} since we use string keys
+let globalVolume = 1;  // Fixed: Added 'let' declaration
+let globalMusicVol = 1;  // Fixed: Added 'let' declaration
+let globalMusic = null;
+let globalTempMusic = null;
 let lastLongSound = null;
 let lastLongSound2 = null;
 let useSecondLongSound = false;
@@ -42,15 +51,7 @@ function unmuteAll() {
 }
 
 function initializeSounds(scene) {
-    // for (let i in audioFiles) {
-    //     let audioData = audioFiles[i];
-    //     if (soundList[audioData.name]) {
-    //         console.warn('audio name duplicate ', audioData.name);
-    //     }
-    //     soundList[audioData.name] = scene.sound.add(audioData.name);
-    // }
     globalVolume = sdkGetItem("globalVolume") || 1;
-
     globalMusicVol = sdkGetItem("globalMusicVol") || 1;
 }
 
@@ -63,20 +64,22 @@ function playSound(name, volume = 1, loop = false, isMusic = false) {
     soundList[name].volume = soundList[name].fullVolume * globalVolume;
     soundList[name].loop = loop;
     soundList[name].isMusic = isMusic;
+
     if (soundList[name].currTween) {
         soundList[name].currTween.stop();
         soundList[name].currTween = null;
     }
+
     if (isMusic) {
         if (globalMusic) {
-            let globalMusicTemp = globalMusic;
-            fadeAwaySound(globalMusicTemp);
+            fadeAwaySound(globalMusic);  // Fixed: Removed unnecessary temp variable
         }
         globalMusic = soundList[name];
-        globalMusic.volume = 0.1 * volume * globalMusicVol;
+        globalMusic.volume = AUDIO_CONSTANTS.MUSIC_START_VOLUME * volume * globalMusicVol;
         fadeInSound(globalMusic, volume * globalMusicVol);
     }
-    if (!isMusic && soundList[name].duration > 3.5) {
+
+    if (!isMusic && soundList[name].duration > AUDIO_CONSTANTS.LONG_SOUND_THRESHOLD) {
         if (useSecondLongSound) {
             lastLongSound2 = soundList[name];
         } else {
@@ -84,6 +87,7 @@ function playSound(name, volume = 1, loop = false, isMusic = false) {
         }
         useSecondLongSound = !useSecondLongSound;
     }
+
     if (isMuted) {
         soundList[name].volume = 0;
     }
@@ -94,8 +98,8 @@ function playSound(name, volume = 1, loop = false, isMusic = false) {
     return soundList[name];
 }
 
-function playMusic(name, volume = 0.85, loop = false) {
-    return this.playSound(name, volume, loop, true);
+function playMusic(name, volume = AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, loop = false) {
+    return playSound(name, volume, loop, true);  // Fixed: Removed 'this.' - it was undefined
 }
 
 function playFakeBGMusic(name, volume = 1, loop = false) {
@@ -112,9 +116,11 @@ function playFakeBGMusic(name, volume = 1, loop = false) {
         soundList[name].currTween.stop();
         soundList[name].currTween = null;
     }
+
     if (isMuted) {
         soundList[name].volume = 0;
     }
+
     soundList[name].isMusic = true;
     soundList[name].play();
     return soundList[name];
@@ -122,7 +128,8 @@ function playFakeBGMusic(name, volume = 1, loop = false) {
 
 function updateGlobalVolume(newVol = 1) {
     globalVolume = newVol;
-    sdkSetItem("globalVolume", newVol.toString())
+    sdkSetItem("globalVolume", newVol.toString());  // Fixed: Added semicolon
+
     for (let i in soundList) {
         if (soundList[i].isPlaying) {
             if (soundList[i] !== globalMusic) {
@@ -134,18 +141,30 @@ function updateGlobalVolume(newVol = 1) {
 
 function updateGlobalMusicVolume(newVol = 1) {
     globalMusicVol = newVol;
-    sdkSetItem("globalMusicVol", newVol.toString())
+    sdkSetItem("globalMusicVol", newVol.toString());  // Fixed: Added semicolon
+
     if (globalMusic) {
         globalMusic.volume = globalMusic.fullVolume * newVol;
     }
+
     if (globalTempMusic) {
-        globalTempMusic.volume = newVol;
+        globalTempMusic.volume = globalTempMusic.fullVolume * newVol;  // Fixed: Now correctly applies fullVolume multiplier
+    }
+
+    // Fixed: Added null checks for lastLongSound variables
+    if (lastLongSound) {
+        lastLongSound.volume = lastLongSound.fullVolume * newVol;
+    }
+
+    if (lastLongSound2) {
+        lastLongSound2.volume = lastLongSound2.fullVolume * newVol;
     }
 }
 
 function setVolume(sound, volume = 0, duration) {
     let globalToUse = sound.isMusic ? globalMusicVol : globalVolume;
     sound.fullVolume = volume;
+
     if (!duration) {
         sound.volume = sound.fullVolume * globalToUse;
     } else {
@@ -157,12 +176,11 @@ function setVolume(sound, volume = 0, duration) {
     }
 }
 
-function swapMusic(newMusic, volume = 0.85, loop = true) {
+function swapMusic(newMusic, volume = AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, loop = true) {
     let name = getGlobalMusicName();
     if (newMusic !== name) {
-        globalMusic = playMusic(newMusic, volume, loop)
+        globalMusic = playMusic(newMusic, volume, loop);
     }
-    // else do nothing
 }
 
 function getGlobalMusicName() {
@@ -171,11 +189,12 @@ function getGlobalMusicName() {
     } else {
         return "";
     }
-
 }
 
-function fadeAwaySound(sound, duration = 650, ease, onComplete) {
+function fadeAwaySound(sound, duration = AUDIO_CONSTANTS.FADE_AWAY_DURATION, ease, onComplete) {
+    const originalVolume = sound.fullVolume;  // Fixed: Store original volume before modifying
     sound.fullVolume = 0;
+
     sound.currTween = PhaserScene.tweens.add({
         targets: sound,
         volume: sound.fullVolume,
@@ -183,6 +202,7 @@ function fadeAwaySound(sound, duration = 650, ease, onComplete) {
         duration: duration,
         onComplete: () => {
             sound.stop();
+            sound.fullVolume = originalVolume;  // Fixed: Restore original volume after fade
             if (onComplete) {
                 onComplete();
             }
@@ -190,11 +210,12 @@ function fadeAwaySound(sound, duration = 650, ease, onComplete) {
     });
 }
 
-function fadeInSound(sound, volume = 1, duration = 1000) {
+function fadeInSound(sound, volume = 1, duration = AUDIO_CONSTANTS.FADE_IN_DURATION) {
     let globalToUse = sound.isMusic ? globalMusicVol : globalVolume;
     let goalVol = volume * globalToUse;
+
     return PhaserScene.tweens.add({
-        delay: 100,
+        delay: AUDIO_CONSTANTS.FADE_IN_DELAY,
         targets: sound,
         volume: goalVol,
         duration: duration,
