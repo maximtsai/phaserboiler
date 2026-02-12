@@ -1,0 +1,14 @@
+{
+  "name": "phaserboiler",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Phaser boilerplate with Vite dev/build workflow",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1"
+  }
+}

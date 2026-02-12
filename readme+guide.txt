@@ -1,6 +1,16 @@
-Run instructions:
-1. run runServer8124.exe to start a local server (needed otherwise you get security issues with the game)
-2. Open up browser and type in localhost:8124
+Run instructions (modern workflow):
+1. Install Node.js (18+ recommended)
+2. Run: npm install
+3. Run: npm run dev
+4. Open the local URL shown by Vite in your terminal
+
+Build for production:
+1. Run: npm run build
+2. Output is written to dist/
+
+Legacy workflow (still available):
+1. Run runServer8124.exe to start a local server
+2. Open browser and type localhost:8124
 3. Game should load up and run
 
 ======
