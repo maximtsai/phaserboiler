@@ -39,7 +39,7 @@ class DialogManager {
     }
 }
 
-dialogManager = new DialogManager();
+const dialogManager = new DialogManager();
 
 class DialogNode {
     constructor(dialogData) {

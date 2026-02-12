@@ -22,17 +22,19 @@ class LoadingManager {
         };
 
         // Progress tracking
-        scene.load.on('progress', (value) => {
+        const onProgress = (value) => {
             resetTimer();
             if (onProgressCallback) {
                 onProgressCallback(value);
             }
-        });
+        };
+        scene.load.on('progress', onProgress);
 
-        scene.load.on('fileprogress', resetTimer);
+        const onFileProgress = () => resetTimer();
+        scene.load.on('fileprogress', onFileProgress);
 
         // Retry logic for failed files
-        scene.load.on('loaderror', (file) => {
+        const onLoadError = (file) => {
             console.error('Failed to load file:', file.key, file.url);
             resetTimer();
             
@@ -57,22 +59,29 @@ class LoadingManager {
                     onProgressCallback(null, 'some files failed');
                 }
             }
-        });
+        };
+        scene.load.on('loaderror', onLoadError);
 
         // Clear failed files on successful load
-        scene.load.on('filecomplete', (key) => {
+        const onFileComplete = (key) => {
             resetTimer();
             if (failedFiles.has(key)) {
                 console.log(`File ${key} loaded successfully on retry`);
                 failedFiles.delete(key);
             }
-        });
+        };
+        scene.load.on('filecomplete', onFileComplete);
 
         // Hard timeout for main loading (30 seconds)
         loadTimeout = setTimeout(() => {
             if (!loadComplete) {
                 console.warn(`Loading timeout reached - forcing game start with ${scene.load.totalFailed || 0} failed files`);
                 this.finishLoading(scene, loadComplete, loadTimeout, null, onCompleteCallback);
+                // Clean up event listeners
+                scene.load.off('progress', onProgress);
+                scene.load.off('fileprogress', onFileProgress);
+                scene.load.off('loaderror', onLoadError);
+                scene.load.off('filecomplete', onFileComplete);
             }
         }, this.TIMEOUT_THRESHOLD);
 
@@ -89,16 +98,27 @@ class LoadingManager {
                 if (!scene.load.isLoading()) {
                     console.warn('Loader inactive - forcing completion');
                     this.finishLoading(scene, loadComplete, loadTimeout, watchdogInterval, onCompleteCallback);
+                    // Clean up event listeners
+                    scene.load.off('progress', onProgress);
+                    scene.load.off('fileprogress', onFileProgress);
+                    scene.load.off('loaderror', onLoadError);
+                    scene.load.off('filecomplete', onFileComplete);
                 }
             }
         }, this.WATCHDOG_INTERVAL);
 
         // Normal completion
-        scene.load.on('complete', () => {
+        const onComplete = () => {
             if (!loadComplete) {
+                // Clean up event listeners
+                scene.load.off('progress', onProgress);
+                scene.load.off('fileprogress', onFileProgress);
+                scene.load.off('loaderror', onLoadError);
+                scene.load.off('filecomplete', onFileComplete);
                 this.finishLoading(scene, loadComplete, loadTimeout, watchdogInterval, onCompleteCallback);
             }
-        });
+        };
+        scene.load.on('complete', onComplete);
 
         return {
             failedFiles,
@@ -111,6 +131,7 @@ class LoadingManager {
         let lastProgressTime = Date.now();
         let loadStarted = false;
         let failedFiles = new Map();
+        let eventListeners = [];
 
         const resetTimer = () => {
             lastProgressTime = Date.now();
@@ -132,16 +153,27 @@ class LoadingManager {
         }, this.WATCHDOG_INTERVAL);
 
         // Progress tracking
-        scene.load.on('progress', resetTimer);
-        scene.load.on('fileprogress', resetTimer);
+        const onProgress = () => resetTimer();
+        scene.load.on('progress', onProgress);
+        eventListeners.push(['progress', onProgress]);
+
+        const onFileProgress = () => resetTimer();
+        scene.load.on('fileprogress', onFileProgress);
+        eventListeners.push(['fileprogress', onFileProgress]);
 
         // Cleanup on completion
-        scene.load.on('complete', () => {
+        const onComplete = () => {
             clearInterval(stallCheckInterval);
-        });
+            // Clean up all event listeners
+            eventListeners.forEach(([event, handler]) => {
+                scene.load.off(event, handler);
+            });
+        };
+        scene.load.on('complete', onComplete);
+        eventListeners.push(['complete', onComplete]);
 
         // Retry logic for initial preload
-        scene.load.on('loaderror', (file) => {
+        const onLoadError = (file) => {
             console.error('Initial preload error for file:', file.key);
             resetTimer();
             
@@ -158,15 +190,19 @@ class LoadingManager {
             } else {
                 console.error(`Failed to load ${file.key} after ${this.MAX_RETRIES} attempts - will continue without it`);
             }
-        });
+        };
+        scene.load.on('loaderror', onLoadError);
+        eventListeners.push(['loaderror', onLoadError]);
 
         // Clear failed files on success
-        scene.load.on('filecomplete', (key) => {
+        const onFileComplete = (key) => {
             if (failedFiles.has(key)) {
                 console.log(`File ${key} loaded successfully on retry`);
                 failedFiles.delete(key);
             }
-        });
+        };
+        scene.load.on('filecomplete', onFileComplete);
+        eventListeners.push(['filecomplete', onFileComplete]);
 
         return {
             failedFiles,

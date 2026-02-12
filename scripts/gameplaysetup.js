@@ -135,10 +135,11 @@ function setupGame() {
 
     createAnimations(PhaserScene);
 
-    globalObjects.timeManager = new TimeManager();
-    globalObjects.hoverTextManager = new InternalHoverTextManager(PhaserScene);
+    // Managers are singletons created at module load
+    
+    handleGlobalKeyPresses();
 
-    console.log("setup game called")
+    console.log("setup game called");
 }
 
 function setupPlayer() {

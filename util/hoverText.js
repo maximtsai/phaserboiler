@@ -1,6 +1,5 @@
 class InternalHoverTextManager {
-    constructor(scene) {
-        PhaserScene = scene || PhaserScene;
+    constructor() {
         this.hoverTextList = [];
         this.lastHovered = null;
 
@@ -53,6 +52,8 @@ class InternalHoverTextManager {
         }
     }
 }
+
+const hoverTextManager = new InternalHoverTextManager();
 
 class HoverDisplay {
     constructor(data) {
@@ -201,9 +202,7 @@ class HoverText {
         this.originX = data.displayOrigin ? data.displayOrigin.x : 0;
         this.originY = data.displayOrigin ? data.displayOrigin.y : 0;
 
-        if (globalObjects.hoverTextManager) {
-            globalObjects.hoverTextManager.addToHoverTextList(this);
-        }
+        hoverTextManager.addToHoverTextList(this);
 
         this.depth = 0;
     }
@@ -266,8 +265,6 @@ class HoverText {
             return;
         }
         this.isDestroyed = true;
-        if (globalObjects.hoverTextManager) {
-            globalObjects.hoverTextManager.removeHoverText(this);
-        }
+        hoverTextManager.removeHoverText(this);
     }
 }

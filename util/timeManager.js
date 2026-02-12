@@ -1,7 +1,7 @@
 /**
  * Controls passage of game time, lets you pause and unpause stuff
  **/
- class TimeManager {
+class TimeManager {
     constructor() {
         messageBus.subscribe("tempPause", this.setTempPause.bind(this));
         messageBus.subscribe("pauseGame", this.setPermPause.bind(this));
@@ -31,7 +31,7 @@
             PhaserScene.time.timeScale = gameVars.gameManualSlowSpeed || 1;
             PhaserScene.anims.globalTimeScale = gameVars.gameManualSlowSpeed || 1;
             this.currTimeoutAmt = null;
-        }, dur)
+        }, dur);
     }
 
     setPermPause(amt = 0.002) {
@@ -68,5 +68,6 @@
         PhaserScene.time.timeScale = gameVars.gameManualSlowSpeed;
         PhaserScene.anims.globalTimeScale = gameVars.gameManualSlowSpeed;
     }
-
 }
+
+const timeManager = new TimeManager();
