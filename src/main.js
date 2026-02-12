@@ -537,6 +537,7 @@ function resizeGame() {
 
 Object.assign(window, {
     onloadFunc,
+    onLoadComplete,
     resizeGame,
     gameConsts,
     gameVars,

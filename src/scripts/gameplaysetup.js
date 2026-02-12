@@ -26,7 +26,7 @@ function setupLoadingBar(scene) {
         // On complete callback
         () => {
             loadObjects.loadingText.setVisible(false);
-            onLoadComplete(scene);
+            window.onLoadComplete(scene);
             // loadObjects.fadeBG = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'blackPixel').setScale(1000).setAlpha(0.5).setDepth(-5);
 
             for (let i in loadObjects) {
