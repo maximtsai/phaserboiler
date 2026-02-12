@@ -8,6 +8,10 @@ Build for production:
 1. Run: npm run build
 2. Output is written to dist/
 
+Project layout note:
+- Runtime game files now live in public/ and are copied to dist/ by Vite automatically.
+- Keep non-runtime/dev files at project root (for example: raw_assets, docs, local server exe).
+
 Legacy workflow (still available):
 1. Run runServer8124.exe to start a local server
 2. Open browser and type localhost:8124
