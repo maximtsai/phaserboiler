@@ -9,7 +9,8 @@ Build for production:
 2. Output is written to dist/
 
 Project layout note:
-- Runtime game files now live in public/ and are copied to dist/ by Vite automatically.
+- Source code now lives in src/ and is bundled by Vite into dist/assets/index-*.js.
+- Static runtime assets (audio/fonts/sprites/phaser.min.js) live in public/ and are copied as-is to dist/.
 - Keep non-runtime/dev files at project root (for example: raw_assets, docs, local server exe).
 
 Legacy workflow (still available):

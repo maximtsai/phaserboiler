@@ -10,10 +10,12 @@ window.addEventListener('error', function(event) {
 });
 
 let isMobile = testMobile();
+window.isMobile = isMobile;
 let pixelWidth = isMobile ? CONSTANTS.MOBILE_WIDTH : CONSTANTS.DESKTOP_WIDTH;
 let pixelHeight = isMobile ? CONSTANTS.MOBILE_HEIGHT : CONSTANTS.DESKTOP_HEIGHT;
 handleBorders();
 let gameVersion = CONSTANTS.GAME_VERSION;
+window.gameVersion = gameVersion;
 let config = {
     type: Phaser.AUTO,
     scale: {
@@ -47,6 +49,7 @@ let config = {
 };
 
 let game;
+window.game = game;
 
 function onloadFunc() {
     if (!document.location.href.includes(url1) && !document.location.href.includes(url2) && !document.location.href.includes(url4)) {
@@ -61,6 +64,7 @@ function onloadFunc() {
     }
 
     game = new Phaser.Game(config); // var canvas = game.canvas;
+    window.game = game;
     gameVars.gameConstructed = true;
 }
 
@@ -145,6 +149,7 @@ function create ()
     }
     oldTime = Date.now();
     PhaserScene = this;
+    window.PhaserScene = PhaserScene;
     onPreloadComplete(this);
 }
 
@@ -529,3 +534,31 @@ function resizeGame() {
 
     handleBorders();
 }
+
+Object.assign(window, {
+    onloadFunc,
+    resizeGame,
+    gameConsts,
+    gameVars,
+    loadObjects,
+    globalObjects,
+    gameOptions,
+    challenges,
+    cheats,
+    funnies,
+    loadFileList,
+    screenShake,
+    screenShakeLong,
+    screenShakeManual,
+    zoomTemp,
+    zoomTempSlow,
+    handleBorders,
+    showHTMLBackground,
+    switchBackground,
+    switchBackgroundInstant,
+    preloadImage,
+    fadeBackground,
+});
+
+window.addEventListener('load', onloadFunc);
+window.addEventListener('resize', resizeGame);

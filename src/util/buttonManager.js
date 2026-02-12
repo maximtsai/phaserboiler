@@ -106,3 +106,5 @@ class InternalButtonManager {
 }
 
 const buttonManager = new InternalButtonManager();
+
+window.buttonManager = buttonManager;

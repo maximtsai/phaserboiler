@@ -209,3 +209,24 @@ function sdkGameEnd() {
 function sdkGetAchievement(id) {
 
 }
+
+Object.assign(window, {
+    loadSDK,
+    sdkShowRewardAd,
+    sdkLoadingStart,
+    sdkLoadingStop,
+    crazyGamesMidgameAd,
+    sdkShowMidgameAd,
+    sdkShowHappyTime,
+    displayBanner,
+    sdkShowBannerAd,
+    sdkClearBanner,
+    sdkGetItem,
+    sdkSetItem,
+    sdkHasAdBlock,
+    sdkGameplayStart,
+    sdkGameplayStop,
+    sdkGameStart,
+    sdkGameEnd,
+    sdkGetAchievement,
+});

@@ -588,3 +588,11 @@ class Button {
         });
     }
 }
+
+Object.assign(window, {
+    NORMAL,
+    HOVER,
+    PRESS,
+    DISABLE,
+    Button,
+});

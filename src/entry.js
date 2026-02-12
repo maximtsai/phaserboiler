@@ -1,0 +1,29 @@
+import './util/constants.js';
+import './sdkManager.js';
+import './audioFiles.js';
+import './imageFiles.js';
+import './gameAnims.js';
+import './fontFiles.js';
+import './textData1.js';
+import './textData2.js';
+
+import './util/messageBus.js';
+import './util/buttonManager.js';
+import './util/button.js';
+import './util/mouseManager.js';
+import './util/updateManager.js';
+import './util/loadingManager.js';
+import './util/audioManager.js';
+import './util/helperFunction.js';
+import './util/poolManager.js';
+import './util/popupManager.js';
+import './util/timeManager.js';
+import './util/hoverText.js';
+import './util/dialogManager.js';
+import './util/dialogDisplay.js';
+import './util/videoManager.js';
+
+import './scripts/uibuttons.js';
+import './scripts/gameplaysetup.js';
+import './scripts/mainmenu.js';
+import './main.js';

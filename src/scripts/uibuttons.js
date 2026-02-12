@@ -145,3 +145,8 @@ function createMuteMusicButton(x, y) {
     
     return button;
 }
+
+Object.assign(window, {
+    createMuteSFXButton,
+    createMuteMusicButton,
+});

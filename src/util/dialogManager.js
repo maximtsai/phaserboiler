@@ -212,6 +212,11 @@ class DialogNode {
         messageBus.publish("setBranches", this.branches, onFinishFunc);
     }
 }
+
+Object.assign(window, {
+    dialogManager,
+    DialogNode,
+});
 /*
 class DialogBranch {
     constructor() {

@@ -25,7 +25,7 @@ class InternalPoolManager {
     }
 }
 
-poolManager = new InternalPoolManager();
+const poolManager = new InternalPoolManager();
 
 function getTempPoolObject(atlas, name, poolName, duration = 250) {
     let effect = poolManager.getItemFromPool(poolName);
@@ -41,3 +41,8 @@ function getTempPoolObject(atlas, name, poolName, duration = 250) {
 
     return effect;
 }
+
+Object.assign(window, {
+    poolManager,
+    getTempPoolObject,
+});

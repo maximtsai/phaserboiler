@@ -1,4 +1,4 @@
-let language = 'en_us';
+window.language = window.language || 'en_us';
 
 let textData = {
     "translate_warn": {
@@ -139,7 +139,7 @@ let textData = {
 }
 
 function setLanguage(lang) {
-    language = lang;
+    window.language = lang;
     localStorage.setItem("language", lang);
 
     messageBus.publish('language_switch', lang)
@@ -150,8 +150,14 @@ function getLangText(textName) {
         console.error("Missing text name ", textName);
         return "MISSING TEXT";
     }
-    return textData[textName][language];
+    return textData[textName][window.language || 'en_us'];
 }
+
+Object.assign(window, {
+    setLanguage,
+    getLangText,
+    textData,
+});
 
 function getBasicText(textName) {
     if (!textData[textName]) {

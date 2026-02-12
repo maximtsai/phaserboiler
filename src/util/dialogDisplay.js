@@ -707,3 +707,8 @@ class DialogDisplay {
         this.reset();
     }
 }
+
+Object.assign(window, {
+    DialogBranchButton,
+    DialogDisplay,
+});

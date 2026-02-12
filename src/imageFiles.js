@@ -16,3 +16,10 @@ const imageFiles = [
 
 const videoFiles = [
 ];
+
+Object.assign(window, {
+    imageFilesPreload,
+    imageAtlases,
+    imageFiles,
+    videoFiles,
+});

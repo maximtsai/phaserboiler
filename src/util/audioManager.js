@@ -299,3 +299,23 @@ function fadeInSound(sound, volume = 1, duration = AUDIO_CONSTANTS.FADE_IN_DURAT
         ease: 'Quad.easeIn'
     });
 }
+
+Object.assign(window, {
+    initializeSounds,
+    playSound,
+    playMusic,
+    playFakeBGMusic,
+    updateGlobalVolume,
+    updateGlobalMusicVolume,
+    setVolume,
+    swapMusic,
+    getGlobalMusicName,
+    fadeAwayMusic,
+    fadeAwaySound,
+    fadeInSound,
+    muteAll,
+    unmuteAll,
+    muteSFX,
+    muteMusic,
+    recheckMuteState,
+});

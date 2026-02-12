@@ -8,3 +8,5 @@ const audioFiles = [
     {name: 'click', src: 'audio/click.mp3'},
 
 ]
+
+window.audioFiles = audioFiles;

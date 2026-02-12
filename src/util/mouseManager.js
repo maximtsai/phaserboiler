@@ -84,3 +84,9 @@ function setupMouseInteraction(scene) {
         mouseManager.onPointerUpAlt(pointer);
     };
 }
+
+Object.assign(window, {
+    mouseManager,
+    mouseToHand,
+    setupMouseInteraction,
+});

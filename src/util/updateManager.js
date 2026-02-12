@@ -37,4 +37,6 @@ class UpdateManager {
     }
 }
 
-updateManager = new UpdateManager();
+const updateManager = new UpdateManager();
+
+window.updateManager = updateManager;

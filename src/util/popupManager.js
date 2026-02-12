@@ -185,3 +185,5 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = "...", on
 
     return itemsToDestroy;
 }
+
+window.showYesNoPopup = showYesNoPopup;

@@ -1,4 +1,4 @@
-helperFunction = {};
+const helperFunction = {};
 
 helperFunction.runFunctionOverIntervals = function runFunctionOverIntervals(func, intervals = [], prevDelay = 0) {
     if (intervals.length > 0) {
@@ -101,3 +101,14 @@ function typewriterText(textObj, str, delay = 50, sfx) {
 function restartGame() {
     location.reload();
 }
+
+Object.assign(window, {
+    helperFunction,
+    openFullscreen,
+    testMobile,
+    isSafariIOS,
+    createGlobalClickBlocker,
+    hideGlobalClickBlocker,
+    typewriterText,
+    restartGame,
+});

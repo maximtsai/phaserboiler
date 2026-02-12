@@ -268,3 +268,9 @@ class HoverText {
         hoverTextManager.removeHoverText(this);
     }
 }
+
+Object.assign(window, {
+    hoverTextManager,
+    HoverDisplay,
+    HoverText,
+});

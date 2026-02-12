@@ -153,3 +153,5 @@ class InternalMessageBus {
 }
 
 const messageBus = new InternalMessageBus();
+
+window.messageBus = messageBus;

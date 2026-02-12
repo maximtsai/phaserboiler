@@ -1,15 +1,15 @@
 let canFinishLoading = false;
-let canvas;
+let tempBG;
 
 function setupLoadingBar(scene) {
     // PhaserScene.cameras.main.setZoom(0.98);
     // fadeInBackground('backgroundPreload', 5000, 3.28);
 
     // Basic loading bar visual
-    loadObjects.version = scene.add.text(CONSTANTS.VERSION_PADDING_X, gameConsts.height - CONSTANTS.VERSION_PADDING_X, gameVersion).setOrigin(0, 1).setAlpha(0.7);
+    loadObjects.version = scene.add.text(CONSTANTS.VERSION_PADDING_X, gameConsts.height - CONSTANTS.VERSION_PADDING_X, window.gameVersion).setOrigin(0, 1).setAlpha(0.7);
     loadObjects.version.scrollFactorX = 0; loadObjects.version.scrollFactorY = 0;
 
-    loadObjects.loadingText = scene.add.text(gameConsts.halfWidth, gameConsts.height - (isMobile ? CONSTANTS.LOADING_TEXT_MOBILE_Y : CONSTANTS.LOADING_TEXT_DESKTOP_Y), 'Loading...', {fontFamily: 'garamondbold', fontSize: 36, color: '#FFFFFF', align: 'center'}).setDepth(CONSTANTS.LOADING_TEXT_DEPTH);
+    loadObjects.loadingText = scene.add.text(gameConsts.halfWidth, gameConsts.height - (window.isMobile ? CONSTANTS.LOADING_TEXT_MOBILE_Y : CONSTANTS.LOADING_TEXT_DESKTOP_Y), 'Loading...', {fontFamily: 'garamondbold', fontSize: 36, color: '#FFFFFF', align: 'center'}).setDepth(CONSTANTS.LOADING_TEXT_DEPTH);
     loadObjects.loadingText.setScale(CONSTANTS.LOADING_TEXT_SCALE).setAlpha(CONSTANTS.LOADING_TEXT_ALPHA);
     loadObjects.loadingText.setAlign('center');
     loadObjects.loadingText.setOrigin(0.5, 0);
@@ -125,7 +125,7 @@ function cleanupIntro() {
 }
 
 function setupGame() {
-    canvas = game.canvas;
+    window.canvas = game.canvas;
     if (gameVars.started) {
         return;
     }
@@ -136,7 +136,9 @@ function setupGame() {
     createAnimations(PhaserScene);
 
     // Managers are singletons created at module load
-    
+    globalObjects.timeManager = timeManager;
+    globalObjects.hoverTextManager = hoverTextManager;
+
     handleGlobalKeyPresses();
 
     console.log("setup game called");
@@ -171,6 +173,17 @@ function addPopup(closeFunc) {
 function removePopup() {
     globalObjects.currentOpenedPopups.pop();
 }
+
+Object.assign(window, {
+    setupLoadingBar,
+    clickIntro,
+    cleanupIntro,
+    setupGame,
+    setupPlayer,
+    handleGlobalKeyPresses,
+    addPopup,
+    removePopup,
+});
 
 // function repeatFlash() {
 //     if (gameVars.introFinished) {

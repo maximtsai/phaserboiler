@@ -5,3 +5,5 @@ const fontFiles = [
     { name: 'bonus', url: 'fonts/bonus.xml', imageUrl: 'fonts/bonus.png' },
     { name: 'normal', url: 'fonts/normal.xml', imageUrl: 'fonts/normal.png' },
 ];
+
+window.fontFiles = fontFiles;

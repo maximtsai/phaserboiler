@@ -11,3 +11,5 @@ function createAnimations(scene) {
     //     frameRate: 20
     // });
 }
+
+window.createAnimations = createAnimations;

@@ -71,3 +71,5 @@ class TimeManager {
 }
 
 const timeManager = new TimeManager();
+
+window.timeManager = timeManager;
