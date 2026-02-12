@@ -7,6 +7,8 @@ const imageAtlases = [
     {name: 'pixels', src: 'sprites/pixels.json'},
     {name: 'ui', src: 'sprites/ui.json'},
     {name: 'buttons', src: 'sprites/buttons.json'},
+    {name: 'backgrounds', src: 'sprites/backgrounds.json'},
+    {name: 'icons', src: 'sprites/icons.json'},
 ];
 
 const imageFiles = [

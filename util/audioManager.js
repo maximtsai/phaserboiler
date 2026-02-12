@@ -17,6 +17,13 @@ let lastLongSound = null;
 let lastLongSound2 = null;
 let useSecondLongSound = false;
 let isMuted = false;
+let isSFXMuted = localStorage.getItem('sfxMuted') === 'true';
+let isMusicMuted = localStorage.getItem('musicMuted') === 'true';
+
+function recheckMuteState() {
+    isSFXMuted = localStorage.getItem('sfxMuted') === 'true';
+    isMusicMuted = localStorage.getItem('musicMuted') === 'true';
+}
 
 function muteAll() {
     isMuted = true;
@@ -50,9 +57,55 @@ function unmuteAll() {
     }
 }
 
+function muteSFX(shouldMute) {
+    isSFXMuted = shouldMute;
+    localStorage.setItem('sfxMuted', shouldMute.toString());
+
+    if (shouldMute) {
+        // Mute all non-music sounds
+        for (let i in soundList) {
+            if (!soundList[i].isMusic && soundList[i].isPlaying) {
+                soundList[i].setVolume(0);
+            }
+        }
+    } else {
+        // Restore volume for all non-music sounds
+        for (let i in soundList) {
+            if (!soundList[i].isMusic && soundList[i].isPlaying) {
+                soundList[i].volume = soundList[i].fullVolume * globalVolume;
+            }
+        }
+    }
+}
+
+function muteMusic(shouldMute) {
+    isMusicMuted = shouldMute;
+    localStorage.setItem('musicMuted', shouldMute.toString());
+
+    if (shouldMute) {
+        if (globalMusic) {
+            globalMusic.setVolume(0);
+        }
+        if (globalTempMusic) {
+            globalTempMusic.setVolume(0);
+        }
+    } else {
+        if (globalMusic) {
+            globalMusic.volume = globalMusic.fullVolume * globalMusicVol;
+        }
+        if (globalTempMusic) {
+            globalTempMusic.volume = globalTempMusic.fullVolume * globalMusicVol;
+        }
+    }
+}
+
 function initializeSounds(scene) {
     globalVolume = sdkGetItem("globalVolume") || 1;
     globalMusicVol = sdkGetItem("globalMusicVol") || 1;
+
+    // Initialize mute states from localStorage
+    isSFXMuted = localStorage.getItem('sfxMuted') === 'true';
+    isMusicMuted = localStorage.getItem('musicMuted') === 'true';
 }
 
 function playSound(name, volume = 1, loop = false, isMusic = false) {
@@ -76,7 +129,11 @@ function playSound(name, volume = 1, loop = false, isMusic = false) {
         }
         globalMusic = soundList[name];
         globalMusic.volume = AUDIO_CONSTANTS.MUSIC_START_VOLUME * volume * globalMusicVol;
-        fadeInSound(globalMusic, volume * globalMusicVol);
+        if (isMusicMuted || isMuted) {
+            globalMusic.volume = 0;
+        } else {
+            fadeInSound(globalMusic, volume * globalMusicVol);
+        }
     }
 
     if (!isMusic && soundList[name].duration > AUDIO_CONSTANTS.LONG_SOUND_THRESHOLD) {
@@ -88,7 +145,7 @@ function playSound(name, volume = 1, loop = false, isMusic = false) {
         useSecondLongSound = !useSecondLongSound;
     }
 
-    if (isMuted) {
+    if (isMuted || (!isMusic && isSFXMuted) || (isMusic && isMusicMuted)) {
         soundList[name].volume = 0;
     }
 
@@ -98,7 +155,7 @@ function playSound(name, volume = 1, loop = false, isMusic = false) {
     return soundList[name];
 }
 
-function playMusic(name, volume = AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, loop = false) {
+function playMusic(name, volume = AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, loop = true) {
     return playSound(name, volume, loop, true);  // Fixed: Removed 'this.' - it was undefined
 }
 
@@ -189,6 +246,26 @@ function getGlobalMusicName() {
     } else {
         return "";
     }
+}
+
+function fadeAwayMusic(duration = AUDIO_CONSTANTS.FADE_AWAY_DURATION, ease, onComplete) {
+    let sound = globalMusic;
+    const originalVolume = sound.fullVolume;  // Fixed: Store original volume before modifying
+    sound.fullVolume = 0;
+
+    sound.currTween = PhaserScene.tweens.add({
+        targets: sound,
+        volume: sound.fullVolume,
+        ease: ease,
+        duration: duration,
+        onComplete: () => {
+            sound.stop();
+            sound.fullVolume = originalVolume;  // Fixed: Restore original volume after fade
+            if (onComplete) {
+                onComplete();
+            }
+        }
+    });
 }
 
 function fadeAwaySound(sound, duration = AUDIO_CONSTANTS.FADE_AWAY_DURATION, ease, onComplete) {
